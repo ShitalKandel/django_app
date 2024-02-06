@@ -7,7 +7,7 @@ def signupView(request):
         form = signupform(request.POST)
         if form.is_valid():
             form.save()
-            return render(request, 'register.html') 
+            return render(request, 'login.html') 
         form = signupform()  
     else:
         return render(request, 'register.html', {'form': form})
