@@ -16,16 +16,22 @@ class signupform(UserCreationForm):
 
 
     def save(self,commit=True):
-        # user = (signupform,self).save(commit=Flase)
+        user = super(signupform,self).save(commit=False)
+        user.email = self.cleaned_data['email']
+        user.firstname = self.cleaned_data['firstname']
+        user.lastname = self.cleaned_data['lastname']
+
+        if commit:
+            user.save()
+
+        return user
+
+        
+
+
+class loginform(User):
+
         pass
-
-
-# class loginform(User):
-#     username = forms.request['username']
-#     password = forms.request['password']
-#     if username and password in UserCreationForm:
-#         # return render()
-#         pass
     
     
 

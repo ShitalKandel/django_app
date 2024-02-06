@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from .models import signupform
 
 
@@ -7,8 +7,8 @@ def signupView(request):
         form = signupform(request.POST)
         if form.is_valid():
             form.save()
-            return render(request, 'login.html') 
-        form = signupform()  
+            return redirect(request, 'login.html') 
+        # form = signupform()  
     else:
         return render(request, 'register.html', {'form': form})
 
