@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>
+        </title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        {% load static  %}
+        <link rel="stylesheet" href="{%static,'style.css' %}">
+    </head>
+    <body>
+        <div class="register">
+            <div class="register-container">
+                <form>
+                    {% csrf_token %}
+                    <label for="fullname">First Name</label><br>
+                    <input type="text" id="fullname" name="fullname"> <br><br>
+                    
+                    <lable for="password" >Enter Password</label><br>
+                    <input type="password" id="password" name="password"><br><br>
+                    
+                </form>
+                <button type="button">Register Account</button>
+            </div>
+        </div>
+        <script src="" async defer></script>
+    </body>
+</html>
