@@ -15,17 +15,25 @@ class signupform(UserCreationForm):
         fields = ('Username','email','password','reset-password','firstname','lastname')
 
 
-    # def save(self,commit=True):
-    #     user = super(signupform,self).save(commit=False)
-    #     user.email = self.cleaned_data['email']
-    #     user.firstname = self.cleaned_data['firstname']
-    #     user.lastname = self.cleaned_data['lastname']
+    def save(self,commit=True):
+        user = super(signupform,self).save(commit=False)
+        user.email = self.cleaned_data['email']
+        user.firstname = self.cleaned_data['firstname']
+        user.lastname = self.cleaned_data['lastname']
 
-    #     if commit:
-    #         user.save()
+        if commit:
+            user.save()
 
-    #     return user
+        return user
+    
 
+class singinform(signupform):
+    fullname = signupform.firstname + signupform.lastname
+    password = User.password
+
+    if User.password in signupform ==  password:
+        
+        
         
 
 

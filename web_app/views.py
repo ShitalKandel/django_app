@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect
-from .models import signupform
+from .models import signupform,singinform
 from django.contrib.auth import login
 
 
@@ -15,6 +15,11 @@ def signupView(request):
         form = signupform()
     return render(request, 'register.html', {'form': form})
 
-def loginView(request):        
+def loginView(request):
+    if request.method == "POST":
+        form = singinform(request.POST)
+        if form.is_valid() == signupform:
+            login(login)
+
     return render(request, 'login.html') 
 

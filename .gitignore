@@ -1,0 +1,4 @@
+db.sqlite3
+__pycache__
+social_media
+static_root
