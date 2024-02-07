@@ -1,12 +1,18 @@
 
+
+
 body {
     font-family: Arial, sans-serif;
     background-color: #f0f2f5;
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    height: 100vh; 
 }
 
 .container {
-    max-width: 400px;
-    margin: 50px auto;
+    max-width: 450px;
+    margin: 150px auto;
     padding: 20px;
     background-color: #fff;
     border-radius: 8px;
@@ -17,10 +23,29 @@ body {
     text-align: center;
 }
 
-.register-form h2 {
+.register-form h2{
     margin-bottom: 20px;
-    color: #1877f2; /* Facebook blue */
+    color: #1877f2;
+    position : relative;
 }
+
+.register-form h2::after {
+    content: "";
+    position: absolute;
+    bottom: -5px; 
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #000; 
+}
+
+.register-form h1 {
+    margin-left: 40px;
+    color: rgb(green,red ,blue );
+    background: url('/static/media/media.jpg'); 
+    background-size: cover;
+}
+
 
 .form-group {
     margin-bottom: 20px;

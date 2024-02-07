@@ -1,44 +1,12 @@
-from django import forms
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
+from django.db import models
 
-
-
-# Create your models here.
-class signupform(UserCreationForm):
-    firstname = forms.CharField(max_length=100)
-    lastname = forms.CharField(max_length=100)
-    email = forms.EmailField(max_length=100)
-
-    class meta:
-        meta = User
-        fields = ('Username','email','password','reset-password','firstname','lastname')
-
-
-    def save(self,commit=True):
-        user = super(signupform,self).save(commit=False)
-        user.email = self.cleaned_data['email']
-        user.firstname = self.cleaned_data['firstname']
-        user.lastname = self.cleaned_data['lastname']
-
-        if commit:
-            user.save()
-
-        return user
-    
-
-class singinform(signupform):
-    fullname = signupform.firstname + signupform.lastname
-    password = User.password
-
-    if User.password in signupform ==  password:
-        
-        
-        
-
-
+class UserProfile(models.Model):
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    email = models.EmailField(max_length=100)
+    password = models.CharField(max_length=100)  
 
     
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"
     
-
-        

@@ -1,31 +1,33 @@
 <!DOCTYPE html>
-
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>
-        </title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        {% load static  %}
-        <link rel="stylesheet" href="{%static,'style.css' %}">
-    </head>
-    <body>
-        <div class="register">
-            <div class="register-container">
-                <form>
-                    {% csrf_token %}
-                    <label for="fullname">First Name</label><br>
-                    <input type="text" id="fullname" name="fullname"> <br><br>
-                    
-                    <lable for="password" >Enter Password</label><br>
-                    <input type="password" id="password" name="password"><br><br>
-                    
-                </form>
-                <button type="button">Register Account</button>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login your account</title>
+    {% load static %}
+    <link href="{% static 'style.css' %}" rel="stylesheet" >
+</head>
+<body>
+    <div class="container">
+        <form method="post">
+            {% csrf_token %}
+            <h1>Psyco Media</h1>
+            <h2>Login to your Account</h2>
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
             </div>
-        </div>
-        <script src="" async defer></script>
-    </body>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            {% if error_message %}
+            <p>{{ error_message }}</p>
+            {% endif %}
+            <button type="submit">Login</button>
+            <br><br><br>
+            <label ><a href="{% url 'web_app:register' %}">Create a new account</a></label>
+        </form>
+    </div>
+</body>
 </html>

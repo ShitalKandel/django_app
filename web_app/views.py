@@ -1,25 +1,53 @@
-from django.shortcuts import render,redirect
-from .models import signupform,singinform
-from django.contrib.auth import login
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User
+from .forms import SignupForm,LoginForm
 
 
+def register(request):
+    if request.method == 'POST':
+        form = SignupForm(request.POST)
 
-def signupView(request):
-    if request.method == "POST":
-        form = signupform(request.POST)
         if form.is_valid():
-            user=form.save()
+            form.save()
+            username = form.cleaned_data.get('username')
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=raw_password)
             login(request,user)
-            return redirect('login.html') 
+            return render('login_success.')  
     else:
-        form = signupform()
+        form = SignupForm()
+    
     return render(request, 'register.html', {'form': form})
 
-def loginView(request):
-    if request.method == "POST":
-        form = singinform(request.POST)
-        if form.is_valid() == signupform:
-            login(login)
+def login_success(request):
+    return render(request, 'login_success.html')
 
-    return render(request, 'login.html') 
 
+def signIn(request):
+    error_message = None
+
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('login_success')
+            else:
+                error_message = "Invalid username or password."
+    else:
+        form = LoginForm()
+
+    return render(request, 'login.html', {'form': form, 'error_message': error_message})
+
+
+def new_account(request):
+    return redirect(request,'register')
+
+def logout():
+    if input =='submit':
+        signout = signIn()
+    return signout
