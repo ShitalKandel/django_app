@@ -8,6 +8,11 @@
 <body>
     <h1>Registration Successful!</h1>
     <p>You have successfully registered.</p><br>
-    <form><a href = "login_success.html"><button>Logout</button></a></form>
+    
+    <form method="POST" action="{% url 'web_app:login'%}">
+        {% csrf_token %}
+
+    <input type="submit" value="Login"></input>
+    </form>
 </body>
 </html>

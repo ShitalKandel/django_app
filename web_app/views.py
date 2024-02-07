@@ -14,7 +14,7 @@ def register(request):
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=raw_password)
             login(request,user)
-            return render('login_success.')  
+            return redirect('web_app:login_success')  
     else:
         form = SignupForm()
     
@@ -34,20 +34,18 @@ def signIn(request):
             password = form.cleaned_data['password']
             user = authenticate(request, username=username, password=password)
             if user is not None:
+                user.save(force_insert=True,force_update=True)
                 login(request, user)
-                return redirect('login_success')
+                return redirect('web_app:login_success')
             else:
                 error_message = "Invalid username or password."
-    else:
-        form = LoginForm()
-
+    form = LoginForm()
     return render(request, 'login.html', {'form': form, 'error_message': error_message})
 
 
 def new_account(request):
     return redirect(request,'register')
 
-def logout():
-    if input =='submit':
-        signout = signIn()
-    return signout
+def logout(request):
+    
+    return render(request,'logout.html')
