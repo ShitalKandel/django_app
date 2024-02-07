@@ -9,13 +9,13 @@
 </head>
 <body>
     <div class="container">
-        <form method="post">
+        <form method="post" action="{% url 'web_app:login' %}">
             {% csrf_token %}
             <h1>Psyco Media</h1>
             <h2>Login to your Account</h2>
             <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" required>
+                <label for="email">Email</label>
+                <input type="text" id="username" name="email" required>
             </div>
             <div class="form-group">
                 <label for="password">Password</label>
