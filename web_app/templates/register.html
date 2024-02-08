@@ -11,8 +11,9 @@
     {% csrf_token %}
     <div class="container">
         <form class="register-form" method="POST">
+            <img src="{% static 'media/media.jpeg'%}" class="icon-media" alt="Psycho Media Icon">
             {% csrf_token %}
-            <h1>Psyco Media</h1>
+            
             <div class="title">
                 <h2>User Registration</h2>
             </div>

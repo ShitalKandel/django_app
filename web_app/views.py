@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 # from django.contrib.auth import  login
-from .models import UserProfile
-from .forms import SignupForm,LoginForm
+from .models import UserProfile,Photo
+from .forms import SignupForm,LoginForm,UserImage
 
 
 def register(request):
@@ -41,9 +41,27 @@ def signIn(request):
     return render(request, 'login.html', {'form': form, 'error_message': error_message})
 
 
-def new_account(request):
-    return redirect(request,'register')
+def profile(request):
+    return redirect(request,'login_success')
+
+
 
 def logout(request):
     
     return render(request,'logout.html')
+
+
+def imagerequest(request):
+    if request.method == 'POST':
+        form = UserImage(request.POST,request.FILES)    
+        
+        if form.is_valid():
+            form.save()
+
+            img_obj = form.instance
+            return render(request,'image.html',{'form':form,'img_obj':img_obj})
+        
+        else:
+            form = UserImage()
+
+    return render(request,'image.html',{'form':form})

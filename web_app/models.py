@@ -11,3 +11,12 @@ class UserProfile(models.Model):
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
     
+class Photo(models.Model):
+    caption = models.CharField(max_length=100)
+    imagefield = models.ImageField(upload_to='image')
+
+
+    def __str__(self):
+        return self.caption
+
+    

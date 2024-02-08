@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vertical Navbar</title>
+    {% load static %}
+
+    <link rel="stylesheet" href="{% static 'navbar.css' %}">
+</head>
+<body>
+    <nav>
+        <ul class="navbar">
+            <li><a href="#"><img src="{% static 'media/home.jpeg' %}" alt="Home" class="home-icon"></a></li>
+            <li><a href="#"><img src="{% static 'media/message.jpeg' %}" alt="Messages" class="message-icon"></a></li>
+            <li><a href="#"><img src="{% static 'media/friend.jpeg' %}" alt="Friends" class="firends"></a></li>
+        </ul>
+    </nav>
+</body>
+</html>
