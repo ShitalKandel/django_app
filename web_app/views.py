@@ -53,7 +53,7 @@ def logout(request):
 
 def imagerequest(request):
     if request.method == 'POST':
-        form = UserImage(request.POST,request.FILES)    
+        form = UserImage(request.POST, request.Files)    
         
         if form.is_valid():
             form.save()
@@ -64,4 +64,5 @@ def imagerequest(request):
         else:
             form = UserImage()
 
-    return render(request,'image.html',{'form':form})
+    return render(request,'image.html',context={'form':form})
+
