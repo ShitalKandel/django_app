@@ -16,7 +16,7 @@ class Photo(models.Model):
     # username = models.CharField(max_length=100, blank=False)
     caption = models.CharField(max_length=100)
     imagefield = models.ImageField(upload_to='image')
-    user = models.ForeignKey(UserProfile,on_delete=models.CASCADE)
+    user = models.ForeignKey(UserProfile,on_delete=models.CASCADE,null=True)
 
 
 

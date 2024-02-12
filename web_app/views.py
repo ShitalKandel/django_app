@@ -26,6 +26,7 @@ def login_success(request):
 def signIn(request):
     error_message = None
 
+
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
@@ -54,18 +55,17 @@ def logout(request):
 def image_request(request):
     form = UserImage()
     if request.method == 'POST':
-        form = UserImage(request.POST, request.Files)    
+        form = UserImage(request.POST, request.FILES)    
         
         if form.is_valid():
-            form.save()
-            image = form.instance
+            image = form.save()
             # img_obj = form.instance
             return render(request,'image.html',{'form':form,'image':image})
         
-        else:
-            form = UserImage()
+    else:
+        form = UserImage()
 
-    return render(request,'image.html',context={'form':form})
+    return render(request,'image.html',{'form':form})
 
 
 def upload_image(request,image_id):
