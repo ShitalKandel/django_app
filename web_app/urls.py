@@ -10,5 +10,6 @@ urlpatterns=[
     path('logout/',views.logout,name="logout"),
     path('upload/',views.image_request,name="image_request"),
     path('uploaded/',views.upload_image,name="upload_image"),
+    path('feed/',views.feed,name="feed"),
     # path('login/<int:id>',views.profile,name="profile"),
 ]

@@ -20,7 +20,10 @@ def register(request):
 
 
 def login_success(request):
-    return render(request, 'login_success.html')
+    form = UserImage(request.POST, request.FILES)
+    if form.is_valid():
+        form = form.save
+    return render(request, 'login_success.html',{'form':form})
 
 
 def signIn(request):
@@ -59,8 +62,8 @@ def image_request(request):
         
         if form.is_valid():
             image = form.save()
-            # img_obj = form.instance
-            return render(request,'image.html',{'form':form,'image':image})
+
+            return render(request,'image.html',{'image':image})
         
     else:
         form = UserImage()
@@ -85,3 +88,8 @@ def upload_image(request,image_id):
         return render(request,'image.html',{'form':form,'image':image})
     
 
+# def feed(request):
+#     username = s
+#     if username.is_valid():
+#         username.save
+#     return render(request,'home_page.html',{'username':username})
