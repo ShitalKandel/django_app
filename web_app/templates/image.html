@@ -1,0 +1,16 @@
+
+
+
+{% block content %}  
+    <form method="POST" enctype="multipart/form-data">  
+        {% csrf_token %}  
+        {{ form.as_p }}  
+        <button type="submit">Upload</button>  
+    </form>  
+  
+    {% if image %}  
+        <h3>Succesfully uploaded : {{image.caption}}</h3>  
+        <img src="{{ image.imagefield.url }}" alt="{{ image.caption }}" style="max-height:300px">
+        {% endif %}  
+  
+{% endblock content %} 

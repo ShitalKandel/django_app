@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+ul {
+  list-style-type: none;
+  margin: auto;
+  padding: 0;
+  overflow: hidden;
+  background-color: #f0eaea;
+  width: 50%;
+  display: flex;
+}
+
+li {
+  border-right:3px solid #bbb;
+  color: black;
+  flex: 1;
+  text-align: center;
+  width: 100%;
+}
+
+li:last-child {
+  border-right: none;
+}
+
+li:nth-child(2){
+    text-align: center;
+}
+
+
+li a {
+  display: block;
+  color: rgb(155, 105, 105);
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+li a:hover:not(.active) {
+  background-color: #999;
+  color: white;
+}
+
+
+</style>
+</head>
+<body>
+
+<ul>
+  <li><a class="active" href="#home">Home</a></li>
+  <li><a href="#news">Messanger</a></li>
+  <li><a href="#contact">Friend</a></li>
+</ul>
+
+</body>
+</html>
+
+
