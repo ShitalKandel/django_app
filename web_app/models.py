@@ -15,19 +15,20 @@ class UserProfile(models.Model,):
     
 class Photo(models.Model):
     # user_profile = models.ForeignKey(UserProfile,on_delete=models.CASCADE)
-    # username = models.CharField(max_length=100, blank=False)
-    caption = models.CharField(max_length=100)
-    imagefield = models.ImageField(upload_to='image')
+    username = models.ForeignKey(UserProfile,on_delete=models.CASCADE,blank=True,null=True)
+    caption = models.CharField(max_length=100,blank=True,null=True)
+    imagefield = models.ImageField(upload_to='image',blank=True,null=True)
     # user = models.ForeignKey(UserProfile,on_delete=models.CASCADE,null=True)
 
 
     # def __str__(self):
     #     return self.imagefield.url
 
-
+    def get_username(self):
+        return f"{self.username.first_name}{self.username.last_name}"
 
     def __str__(self):
-        return self.caption
+        return self.get_username
     
     # def save(self,*args,**kwargs):
     #     if not self.user:

@@ -48,8 +48,6 @@ def signIn(request):
 def profile(request):
     return redirect(request,'login_success')
 
-
-
 def logout(request):
     
     return render(request,'logout.html')
@@ -88,8 +86,12 @@ def upload_image(request,image_id):
         return render(request,'image.html',{'form':form,'image':image})
     
 
-# def feed(request):
-#     username = s
-#     if username.is_valid():
-#         username.save
-#     return render(request,'home_page.html',{'username':username})
+def create_post(request):
+    return render(request,'home_page.html')
+
+def post(request):
+    if request.method == 'POST':
+        #display the caption image on a new container redirect the username
+        
+        pass
+    return redirect()

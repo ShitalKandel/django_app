@@ -2,32 +2,28 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Web Application</title>
+    <title>Create Post</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'basic.css' %}"> 
-<body>
-    <div class="container">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username">
-        
-        <label for="imageUpload">Upload Image:</label>
-        <input type="file" id="imageUpload" name="imageUpload">
-        
-        <label for="caption">Caption:</label>
-        <textarea id="caption" name="caption"></textarea>
-        
-        <section class="comments">
-            <h2>Comments</h2>
-            <div class="comment">
-                <p>Comment text...</p>
-                <button class="like">Like</button>
-            </div>
-           
-        </section>
-        
-        <button class="like">Like</button>
-    </div>
+    <link rel="stylesheet" href="{% static 'basic.css' %}">
     
-    <script src="app.js"></script> 
-</body>
+</head>
+<body>
+    <div class="post-create">
+                <textarea id="caption" name="caption" placeholder="Create a post ..."></textarea>
+
+        <div class="image-icon-group" >
+            <div class="image-icon-post" onclick="upload_image()">
+        <button type="submit">
+            <img src="{% static 'image.png' %}" href="{% url 'web_app:upload_image' %}"></img>
+        </button>
+            </div>
+        <button type="submit" class="post-btn">Post</button>
+        </div>
+    </div>
+    <script>
+        function upload_image(){
+            document.getElementById('imageUpload').click();
+        }
+    </script>
+    </body>
 </html>

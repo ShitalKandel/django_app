@@ -9,8 +9,8 @@ body {
 }
 
 .container {
-    max-width: 1000px; /* Maximum width of 1000px */
-    width: 50%; /* Adjust as needed */
+    max-width: 1000px; 
+    width: 50%; 
     margin: 150px auto;
     padding: 20px;
     background-color: #fff;
@@ -76,3 +76,5 @@ button[type="submit"] {
 button[type="submit"]:hover {
     background-color: #1153b5; 
 }
+
+

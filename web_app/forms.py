@@ -1,7 +1,6 @@
 from django import forms
 from .models import UserProfile , Photo
 
-
 class SignupForm(forms.Form):
     first_name = forms.CharField(max_length=100)
     last_name = forms.CharField(max_length=100)
@@ -42,3 +41,4 @@ class UserImage(forms.ModelForm):
     class Meta:#data of a parent data
         model = Photo
         fields = ('imagefield',)
+
