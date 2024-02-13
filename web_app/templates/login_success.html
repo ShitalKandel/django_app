@@ -11,22 +11,26 @@
     {% include 'navbar.html' %}
     {% include 'toggle.html' %}
     {% include 'home_page.html' %}
+    {% include 'post.html' %}
 
     <!-- {% include 'image.html' %} -->
    
-    <!-- {% include 'left_side_profilebar.html' %} -->
+    
+    {% include 'left_side_profilebar.html' %}
     {% include 'right_side_profilebar.html' %}
 
-
-    <div></div>
-    
-
-    <form method="POST" action="{% url 'web_app:login'%}">
-        {% csrf_token %}
-    <h1>Login Successfully</h1>
-    <input type="submit" value="Logout"></input>
     <div>
+
+
+        
+        
+        <form method="POST" action="{% url 'web_app:login'%}">
+            {% csrf_token %}
+            <h1>Login Successfully</h1>
+            <input type="submit" value="Logout"></input>
+            <div>
+            </div>
+        </form>
     </div>
-    </form>
 </body>
 </html>
