@@ -11,5 +11,8 @@ urlpatterns=[
     path('upload/',views.image_request,name="image_request"),
     path('uploaded/',views.upload_image,name="upload_image"),
     path('feed/',views.create_post,name="create_post"),
+    path('<str:first_name>_<str:last_name>/',views.post,name="post"),
+    path('profile/',views.left_Profile_Bar,name="left_Profile_Bar"),
+
     # path('login/<int:id>',views.profile,name="profile"),
 ]

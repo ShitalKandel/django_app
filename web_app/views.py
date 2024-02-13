@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 # from django.contrib.auth import  login
-from .models import UserProfile,Photo
-from .forms import SignupForm,LoginForm,UserImage
+from .models import UserProfile,Photo, Feeds
+from .forms import SignupForm,LoginForm,UserImage,New_post
 
 
 def register(request):
@@ -28,8 +28,6 @@ def login_success(request):
 
 def signIn(request):
     error_message = None
-
-
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
@@ -54,6 +52,8 @@ def logout(request):
 
 
 def image_request(request):
+    image = UserImage.objects.__dict__.get.__all__
+
     form = UserImage()
     if request.method == 'POST':
         form = UserImage(request.POST, request.FILES)    
@@ -89,9 +89,22 @@ def upload_image(request,image_id):
 def create_post(request):
     return render(request,'home_page.html')
 
-def post(request):
+def post(request, first_name, last_name):
+    user_profile = UserProfile.objects.get(first_name=first_name, last_name=last_name)
     if request.method == 'POST':
-        #display the caption image on a new container redirect the username
-        
-        pass
-    return redirect()
+        form = New_post(request.POST)
+        if form.is_valid():
+            feed = form.save(commit=False)
+            feed.user_profile = user_profile
+            feed.save()
+            return redirect(f'/{user_profile.first_name}_{user_profile.last_name}/')
+    else:
+        form = New_post()
+
+    feeds = Feeds.objects.filter(user_profile=user_profile)
+    return render(request, 'post.html', {'user_profile': user_profile, 'feeds': feeds, 'form': form})
+
+
+
+def left_Profile_Bar(request):
+    return render(request,'left_side_profilebar.html' )

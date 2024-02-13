@@ -43,7 +43,7 @@ class Feeds(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,related_name='user_comment',blank=True,null=True)
 
 
-# class Profile_Name(objects):
+# class Profile_Name(UserProfile):
 #     def authenticate_user(self,username=None):
 #         first,last = username.split(" ",1)
 #         try:

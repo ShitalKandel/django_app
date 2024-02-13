@@ -1,5 +1,5 @@
 from django import forms
-from .models import UserProfile , Photo
+from .models import UserProfile , Photo,Feeds
 
 class SignupForm(forms.Form):
     first_name = forms.CharField(max_length=100)
@@ -40,5 +40,12 @@ class LoginForm(forms.Form):
 class UserImage(forms.ModelForm):
     class Meta:#data of a parent data
         model = Photo
-        fields = ('imagefield',)
+        fields = ('username','caption','imagefield',)
+
+
+class New_post(forms.ModelForm):
+    class Meta:
+        model = Feeds
+        fields = ['user_profile','name','user','comment']
+    
 
