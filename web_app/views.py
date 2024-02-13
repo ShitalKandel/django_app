@@ -108,3 +108,7 @@ def post(request, first_name, last_name):
 
 def left_Profile_Bar(request):
     return render(request,'left_side_profilebar.html' )
+
+
+def right_Profile_Bar(request):
+    return render(request,'right_side_profilebar.html' )

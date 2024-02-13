@@ -13,6 +13,7 @@ urlpatterns=[
     path('feed/',views.create_post,name="create_post"),
     path('<str:first_name>_<str:last_name>/',views.post,name="post"),
     path('profile/',views.left_Profile_Bar,name="left_Profile_Bar"),
+    path('settings/',views.right_Profile_Bar,name="right_Profile_Bar"),
 
     # path('login/<int:id>',views.profile,name="profile"),
 ]
