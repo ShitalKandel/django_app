@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-# from django.contrib.auth import  login
+from django.contrib.auth import  login,authenticate
 from .models import UserProfile,ImageForm, Feeds
 from .forms import SignupForm,LoginForm,UserImage,New_post
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -41,9 +41,10 @@ def signIn(request):
         if form.is_valid():
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
-            # user = authenticate(request, username=username, password=password)
+            user = authenticate(request, email=email, password=password)
             user= UserProfile.objects.filter(email=email,password=password).first()
             if user:
+                login(request=request,user=user)
                 return redirect('web_app:login_success')
             else:
                 error_message = "Invalid username or password."
@@ -70,7 +71,8 @@ def logout(request):
 this field is created to upload image with caption
 '''
 def image_request(request):
-    image = UserImage.objects.__dict__.get.__all__
+    # image = UserImage.objects.__dict__.get.__all__
+    
     form = UserImage()
     if request.method == 'POST':
         form = UserImage(request.POST, request.FILES)    
@@ -139,7 +141,8 @@ def post(request, first_name, last_name ):
 
 '''profiel bar '''
 def left_Profile_Bar(request):
-    users = UserProfile.objects.all(pk=1)
+    print("hello")
+    users = UserProfile.objects.all()
 
     return render(request,'left_side_profilebar.html' ,{'users':users})
 
@@ -147,3 +150,10 @@ def left_Profile_Bar(request):
 '''settings bar'''
 def right_Profile_Bar(request):
     return render(request,'right_side_profilebar.html' )
+
+
+
+
+
+    
+    

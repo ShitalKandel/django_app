@@ -14,6 +14,7 @@ urlpatterns=[
     path('<str:first_name>_<str:last_name>/',views.post,name="post"),
     path('profile/',views.left_Profile_Bar,name="left_Profile_Bar"),
     path('settings/',views.right_Profile_Bar,name="right_Profile_Bar"),
+    path('user-profile/',views.left_Profile_Bar,name="left_Profile_Bar"),
 
     # path('login/<int:id>',views.profile,name="profile"),
 ]

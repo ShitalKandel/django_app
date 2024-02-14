@@ -8,7 +8,6 @@ class SignupForm(forms.Form):
     email = forms.EmailField(max_length=150, required=True)
     password = forms.CharField(widget=forms.PasswordInput)
     confirm_password = forms.CharField(widget=forms.PasswordInput)
-
     
 
     # class Meta:
@@ -50,6 +49,6 @@ class UserImage(forms.ModelForm):
 class New_post(forms.ModelForm):
     class Meta:
         model = Feeds
-        fields = ['user_profile','name','user','comment']
+        fields = ['user_profile','image_post','user','comment']
     
 

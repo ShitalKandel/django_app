@@ -1,11 +1,9 @@
 from django.db import models
 from django.conf import settings
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
 
-class UserProfile(models.Model,):
-    first_name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=100)
-    email = models.EmailField(max_length=100)
+class UserProfile(AbstractUser):
+
     password = models.CharField(max_length=100)
     profile_pic = models.ImageField(upload_to="profile/pic/",blank=True,null=True)  
 
@@ -40,8 +38,8 @@ class ImageForm(models.Model):
 
 class Feeds(models.Model):
     user_profile = models.ForeignKey(UserProfile,on_delete=models.CASCADE,null=True,blank=True)
+    image_post = models.ImageField(upload_to='post/image',blank=True,null=True)
     comment = models.CharField(max_length=2000)
-    name=models.CharField(max_length=200)
     user = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,related_name='user_comment',blank=True,null=True)
 
 

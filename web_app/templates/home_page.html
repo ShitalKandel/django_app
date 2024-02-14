@@ -10,16 +10,22 @@
 <body>
     <div class="post-create">
                 <textarea id="caption" name="caption" placeholder="Create a post ..."></textarea>
-
         <div class="image-icon-group" >
             <div class="image-icon-post">
-        <!-- <button type="submit"> -->
-            <img src="{% static 'image.png' %}" href="{% url 'web_app:image_request'%}"></img>
-        <!-- </button> -->
+            <img class ="image upload-icon" src="{% static 'image.png' %}" href="{% url 'web_app:image_request'%}"></img>
             </div>
+            <input type="file" id="file-input" style="display: none;" accept="image/*">
+
         <button type="submit" class="post-btn" >Post</button>
         </div>
+
     </div>
+    <script>
+        function openFileExplorer() {
+            // Trigger click event on the file input element
+            document.getElementById('file-input').click();
+        }
+    </script>
     
     </body>
 </html>
