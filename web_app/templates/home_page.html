@@ -13,11 +13,11 @@
 
         <div class="image-icon-group" >
             <div class="image-icon-post">
-        <button type="submit">
-            <img src="{% static 'image.png' %}" href="{% url 'web_app:upload_image' %}"><input type="file"></img>
-        </button>
+        <!-- <button type="submit"> -->
+            <img src="{% static 'image.png' %}" href="{% url 'web_app:image_request'%}"></img>
+        <!-- </button> -->
             </div>
-        <button type="submit" class="post-btn" href="{% url 'web_app:post' %}">Post</button>
+        <button type="submit" class="post-btn" >Post</button>
         </div>
     </div>
     

@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
 # from django.contrib.auth import  login
-from .models import UserProfile,Photo, Feeds
+from .models import UserProfile,ImageForm, Feeds
 from .forms import SignupForm,LoginForm,UserImage,New_post
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 '''
@@ -87,9 +88,9 @@ it uplods the image
 '''
 def upload_image(request,image_id):
     try:
-        image = Photo.objects.get(pk=image_id)
+        image = ImageForm.objects.get(pk=image_id)
     
-    except Photo.DoesNotExist:
+    except ImageForm.DoesNotExist:
         return redirect('image not found')
     
     if request.method == 'POST':
@@ -106,25 +107,28 @@ def upload_image(request,image_id):
 creating a post on the login_success page'''
 def create_post(request):
     if  request.method =="POST":
-        form = Photo()
+        form = ImageForm()
         if form.is_valid():
             form.save()
         return redirect(request,'post')
+    else:
+        return render(request,'login_success.html')
 
 
 '''
 displays the created post on feeds of the page
 with the username , comment , number of likes ,caption or image
 '''
-def post(request, first_name, last_name):
+def post(request, first_name, last_name ):
     user_profile = UserProfile.objects.get(first_name=first_name, last_name=last_name)
     if request.method == 'POST':
-        form = New_post(request.POST)
+        form = New_post(request.POST,request.FILES)
         if form.is_valid():
             feed = form.save(commit=False)
             feed.user_profile = user_profile
             feed.save()
             return redirect(f'/{user_profile.first_name}_{user_profile.last_name}/')
+        
     else:
         form = New_post()
 
@@ -135,7 +139,9 @@ def post(request, first_name, last_name):
 
 '''profiel bar '''
 def left_Profile_Bar(request):
-    return render(request,'left_side_profilebar.html' )
+    users = UserProfile.objects.all(pk=1)
+
+    return render(request,'left_side_profilebar.html' ,{'users':users})
 
 
 '''settings bar'''

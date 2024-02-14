@@ -11,7 +11,7 @@
     {% include 'navbar.html' %}
     {% include 'toggle.html' %}
     {% include 'home_page.html' %}
-    {% include 'post.html' %}
+    
 
     <!-- {% include 'image.html' %} -->
    
@@ -26,7 +26,7 @@
         
         <form method="POST" action="{% url 'web_app:login'%}">
             {% csrf_token %}
-            <h1>Login Successfully</h1>
+            <!-- <h1>Login Successfully</h1> -->
             <input type="submit" value="Logout"></input>
             <div>
             </div>

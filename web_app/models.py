@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-# from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import User
 
 class UserProfile(models.Model,):
     first_name = models.CharField(max_length=100)
@@ -13,7 +13,9 @@ class UserProfile(models.Model,):
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
     
-class Photo(models.Model):
+
+
+class ImageForm(models.Model):
     # user_profile = models.ForeignKey(UserProfile,on_delete=models.CASCADE)
     username = models.ForeignKey(UserProfile,on_delete=models.CASCADE,blank=True,null=True)
     caption = models.CharField(max_length=100,blank=True,null=True)
@@ -41,6 +43,8 @@ class Feeds(models.Model):
     comment = models.CharField(max_length=2000)
     name=models.CharField(max_length=200)
     user = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,related_name='user_comment',blank=True,null=True)
+
+
 
 
 # class Profile_Name(UserProfile):

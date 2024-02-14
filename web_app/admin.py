@@ -1,8 +1,9 @@
 from django.contrib import admin
-from .models import Photo,UserProfile
+from .models import ImageForm,UserProfile,Feeds
 
-admin.site.register(Photo)
+admin.site.register(ImageForm)
 admin.site.register(UserProfile)
+admin.site.register(Feeds)
 
 
 # Register your models here.
