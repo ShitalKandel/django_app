@@ -29,7 +29,9 @@ class SignupForm(forms.Form):
         last_name = self.cleaned_data.get("last_name")
         email = self.cleaned_data.get("email")
         password = self.cleaned_data.get("password")
-        user = UserProfile.objects.create(first_name=first_name,last_name=last_name,email=email,password=password)
+        username = self.cleaned_data
+
+        user = UserProfile.objects.create(first_name=first_name,last_name=last_name,email=email,password=password,username=username)
        
         return user 
 

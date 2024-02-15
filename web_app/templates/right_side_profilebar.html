@@ -48,6 +48,14 @@
   <div class="sidebar-right">
     <div class="vertical-menu">
       <a>Recommended</a>
+
+      
+      <ol>
+        {% for user in recommended_users %}
+        <ul>
+          <button type="submit">Add Friend</button><stong>{{user.first_name}} {{user.last_name}}</strong></ul>
+        {% endfor %}
+      </ol>
     </div>
    
   </div>

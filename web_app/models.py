@@ -28,7 +28,7 @@ class ImageForm(models.Model):
         return f"{self.username.first_name}{self.username.last_name}"
 
     def __str__(self):
-        return self.get_username
+        return self.get_username()
     
     # def save(self,*args,**kwargs):
     #     if not self.user:

@@ -1,37 +1,57 @@
+{% load crispy_forms_tags %} 
+
 {% block content %}  
-<div class="container mt-5">
-    <form method="POST" enctype="multipart/form-data" class="post-create">  
+<div class="container post-create">
+    <form method="POST" enctype="multipart/form-data" class="mt-5">  
         {% csrf_token %}  
         <div class="mb-3">
-            {{ form.as_p }}
+            <input type="text" class="form-control post-caption" placeholder="Write your caption here..."> <!-- Caption input field -->
+            <label for="file-input" class="upload-icon"></label> <!-- File upload icon -->
+            <input type="file" id="file-input"> <!-- File input -->
         </div>
-        <div class="upload-wrapper">
-            <label for="file-input" class="upload-icon btn btn-secondary"></label>
-            <input type="file" name="image" id="file-input" style="display:none;">
-            <button type="submit" class="btn btn-primary post-btn">Post</button>
-        </div>
+        <button type="submit" class="btn btn-primary post-btn">Upload</button>  
     </form>  
 
     {% if image %}  
     <div class="mt-5">
         <h2>{{ image.username }}</h2>
-        <h3>{{ image.caption }}</h3>  
-        <img src="{{ image.imagefield.url }}" alt="{{ image.caption }}" style="max-height:300px" class="img-fluid">
+        <h3>Succesfully uploaded: {{ image.caption }}</h3>  
+        <img src="{{ image.imagefield }}" alt="{{ image.caption }}" style="max-height:300px" class="img-fluid">
     </div>
     {% endif %}  
 </div>
 
+
+
+
 <style>
-    .container {
-    max-width: 50%; /* Take half of the screen */
-    margin: auto; /* Center horizontally */
+
+.post-caption{
+    width: 100%;
+    height: 100px;
+    padding: 10px;
+    resize: vertical;
+    margin-bottom: 20px;
+}
+
+.container {
+max-width: 50%; /* Take half of the screen */
+margin: auto; /* Center horizontally */
 }
 
 .post-create {
+    max-width: 50%;
+    margin: auto;
+    gap: 10px;
+    padding: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
 }
+
 
 .post-caption {
     width: 100%;
@@ -47,7 +67,7 @@
     margin-top: 20px;
 }
 
-.btn-secondary{
+.upload-icon {
     background-color: #cccccc;
     width: 50px;
     height: 50px;
@@ -58,7 +78,7 @@
     cursor: pointer;
 }
 
-.btn-secondary::before {
+.upload-icon::before {
     content: '\21AA'; /* Unicode for rightwards arrow */
     font-size: 24px;
     color: #000; /* Change the color as needed */
@@ -68,7 +88,8 @@
     display: none;
 }
 
-.btn-primary {
+
+.btn-primary{
     background-color: #4267b2;
     color: white;
     padding: 8px 15px;
@@ -85,9 +106,7 @@
     background-color: #53525f;
 }
 
+
 </style>
 
 {% endblock content %}
-
-
-

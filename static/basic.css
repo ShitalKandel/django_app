@@ -1,63 +1,61 @@
 .post-create {
-    /* list-style-type: none; */
-    justify-content: center;
-    max-width:  50%;
+    max-width: 50%;
     margin: auto;
     gap: 10px;
     padding: 0;
     display: flex;
-    overflow: hidden;
     flex-direction: column;
     align-items: center;
     background-color: #fff;
-    box-shadow:  0  2px  4px rgba(0,  0,  0,  0.1);
-    border-radius:  5px;
-}
-
-input[type="file"] {
-    margin-bottom:  20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
 }
 
 textarea {
-    width:  100%;
-    height:  100px;
-    padding:  10px;
+    width: 100%;
+    height: 100px;
+    padding: 10px;
     resize: vertical;
-    margin-bottom:  20px;
+    margin-bottom: 20px;
 }
 
 .image-post-group {
-    display: flex; 
-    align-items: center; 
-    gap:  10px; 
-    margin-top:  20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
 }
 
 .post-btn {
     background-color: #4267b2;
-    color: white; 
-    padding:  8px  15px;
-    text-align: center; 
-    text-decoration: none; 
-    display: inline-block; 
-    font-size:  16px; 
-    margin:  4px  2px; 
-    transition-duration:  0.4s;
-    cursor: pointer; 
+    color: white;
+    padding: 8px 15px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    transition-duration: 0.4s;
+    cursor: pointer;
 }
 
 .post-btn:hover {
-    background-color: #53525f; 
+    background-color: #53525f;
 }
 
-.image-icon-post img {
-    width:  35px;
-    height:  32px; 
-    max-width:  32px;
-    max-height:  32px; 
-    cursor: pointer;
-    border: none;
-    background: none;
-    display: block; 
-    /* object-fit: contain;  */
+.upload-icon {
+    background-color: red;
+    width: 50px;
+    height: 50px;
+    background-color: #cccccc; /* Change the color as needed */
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer; /* Add cursor pointer to indicate it's clickable */
+}
+
+.upload-icon::before {
+    content: '\21AA'; /* Unicode for rightwards arrow */
+    font-size: 24px;
 }

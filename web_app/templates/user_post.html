@@ -6,7 +6,7 @@
 <link href="{% static 'generic.css' %}" rel="stylesheet">
 
 {% block content %}
-<h1>{{ user_profile.first_name }} {{ user_profile.last_name }}</h1>
+<h1>{{ user.first_name }} {{ user.last_name }}</h1>
 <img src="{{ user_profile.profile_pic.url }}" alt="Profile Picture">
 
 <form method="post" action="{% url 'post' user_profile.first_name user_profile.last_name %}">
@@ -15,7 +15,5 @@
   <button type="submit">Submit Comment</button>
 </form>
 
-{% for feed in feeds %}
-  <p><strong>{{ feed.user.username }}:</strong> {{ feed.comment }}</p>
-{% endfor %}
+
 {% endblock %}

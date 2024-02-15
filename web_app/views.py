@@ -19,15 +19,17 @@ def register(request):
     return render(request, 'register.html', {'form': form})
 
 
-
 '''
 after logging in it will redirect to a new page
 '''
 def login_success(request):
     form = UserImage(request.POST, request.FILES)
+    print("Hello")
     if form.is_valid():
         form = form.save
-    return render(request, 'login_success.html',{'form':form})
+    
+    recommended_users = UserProfile.objects.exclude(id=request.user.id)
+    return render(request, 'login_success.html',{'form':form,'recommended_users':recommended_users})
 
 
 '''
@@ -42,7 +44,7 @@ def signIn(request):
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
             user = authenticate(request, email=email, password=password)
-            user= UserProfile.objects.filter(email=email,password=password).first()
+            user= UserProfile.objects.filter(email=email,password=password).first()  #check if userprofile exists or not (only single userprofile)
             if user:
                 login(request=request,user=user)
                 return redirect('web_app:login_success')
@@ -67,23 +69,6 @@ def logout(request):
     return render(request,'logout.html')
 
 
-'''
-this field is created to upload image with caption
-'''
-def image_request(request):
-    # image = UserImage.objects.__dict__.get.__all__
-    
-    form = UserImage()
-    if request.method == 'POST':
-        form = UserImage(request.POST, request.FILES)    
-        if form.is_valid():
-            image = form.save()
-            return render(request,'image.html',{'image':image})
-    else:
-        form = UserImage()
-
-    return render(request,'image.html',{'form':form})
-
 
 '''
 it uplods the image
@@ -99,7 +84,7 @@ def upload_image(request,image_id):
         form = UserImage(request.POST,request.FILES,instance=image)
         if form.is_valid():
             form.save()
-            return redirect('image_request')
+            return render('user_post.html')
     else:
         form = UserImage(instance=image)
         return render(request,'image.html',{'form':form,'image':image})
@@ -109,12 +94,33 @@ def upload_image(request,image_id):
 creating a post on the login_success page'''
 def create_post(request):
     if  request.method =="POST":
-        form = ImageForm()
+        form = ImageForm(request.POST,request.FILES)
         if form.is_valid():
-            form.save()
+            post = form.save(commit=False)
+            post.user_profile = request.user
+            post.save()
         return redirect(request,'post')
     else:
-        return render(request,'login_success.html')
+        form = create_post()
+        return render(request,'login_success',{'form':form})
+
+
+
+'''
+this field is created to upload image with caption
+'''
+def image_request(request):
+    form = UserImage()
+    if request.method == 'POST':
+        form = UserImage(request.POST, request.FILES)    
+        if form.is_valid():
+            image = form.save()
+            return render(request,'image.html',{'image':image})
+    else:
+        form = UserImage()
+
+    return render(request,'image.html',{'form':form})
+
 
 
 '''
@@ -122,26 +128,25 @@ displays the created post on feeds of the page
 with the username , comment , number of likes ,caption or image
 '''
 def post(request, first_name, last_name ):
-    user_profile = UserProfile.objects.get(first_name=first_name, last_name=last_name)
+    user = UserProfile.objects.get(first_name=first_name, last_name=last_name)
     if request.method == 'POST':
         form = New_post(request.POST,request.FILES)
         if form.is_valid():
             feed = form.save(commit=False)
-            feed.user_profile = user_profile
+            feed.user = user
             feed.save()
-            return redirect(f'/{user_profile.first_name}_{user_profile.last_name}/')
-        
+            return redirect(f'/{user.first_name}_{user.last_name}/')
+
     else:
         form = New_post()
 
-    feeds = Feeds.objects.filter(user_profile=user_profile)
-    return render(request, 'post.html', {'user_profile': user_profile, 'feeds': feeds, 'form': form})
+    feeds = Feeds.objects.filter(user=user)
+    return render(request, 'user_post.html', {'user': user, 'feeds': feeds, 'form': form})
 
 
 
 '''profiel bar '''
 def left_Profile_Bar(request):
-    print("hello")
     users = UserProfile.objects.all()
 
     return render(request,'left_side_profilebar.html' ,{'users':users})
@@ -150,10 +155,3 @@ def left_Profile_Bar(request):
 '''settings bar'''
 def right_Profile_Bar(request):
     return render(request,'right_side_profilebar.html' )
-
-
-
-
-
-    
-    
