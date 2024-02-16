@@ -1,5 +1,5 @@
 from django import forms
-from .models import UserProfile , ImageForm,Feeds
+from .models import *
 from django.views.generic import ListView
 
 class SignupForm(forms.Form):
@@ -42,15 +42,25 @@ class LoginForm(forms.Form):
     password = forms.CharField(label="register-form",widget=forms.PasswordInput)
 
 
-class UserImage(forms.ModelForm):
-    class Meta:#data of a parent data
+class CustomFileInput(forms.FileInput):
+    template_name = 'image.html'
+
+class UserImageForm(forms.ModelForm):
+
+    imagefield = forms.FileField()
+    
+    class Meta:
         model = ImageForm
-        fields = ('username','caption','imagefield',)
+        fields = ('username', 'caption', 'imagefield')
 
-
-class New_post(forms.ModelForm):
+class NewPostForm(forms.ModelForm):
     class Meta:
         model = Feeds
-        fields = ['user_profile','image_post','user','comment']
-    
-
+        fields = ['user_profile', 'image_post', 'user', 'comment']
+        labels = {
+            'image_post': 'Image',
+            'comment': 'Comment',
+        }
+        widgets = {
+            'comment': forms.Textarea(attrs={'placeholder': 'comment...'}),
+        }

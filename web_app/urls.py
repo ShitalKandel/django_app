@@ -15,6 +15,10 @@ urlpatterns=[
     path('profile/',views.left_Profile_Bar,name="left_Profile_Bar"),
     path('settings/',views.right_Profile_Bar,name="right_Profile_Bar"),
     path('user-profile/',views.left_Profile_Bar,name="left_Profile_Bar"),
+    path('sent_friend_request/<int:user_id>/',views.friend_request,name="friend request"),
+    path('accept_request/<int:accept_id>/',views.accept_friend_request,name="accept friend request",)
+    # path('user_post/<int:pk>/', views.user_post, name='user_post'),
+
 
     # path('login/<int:id>',views.profile,name="profile"),
 ]

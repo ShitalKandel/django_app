@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import  login,authenticate
-from .models import UserProfile,ImageForm, Feeds
-from .forms import SignupForm,LoginForm,UserImage,New_post
+from .models import *
+from .forms import SignupForm,LoginForm,UserImageForm,NewPostForm
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import HttpResponse
 
 
 '''
@@ -23,13 +25,16 @@ def register(request):
 after logging in it will redirect to a new page
 '''
 def login_success(request):
-    form = UserImage(request.POST, request.FILES)
+    form = UserImageForm(request.POST, request.FILES)
     print("Hello")
     if form.is_valid():
         form = form.save
     
     recommended_users = UserProfile.objects.exclude(id=request.user.id)
-    return render(request, 'login_success.html',{'form':form,'recommended_users':recommended_users})
+    images = ImageForm.objects.all()
+
+
+    return render(request, 'login_success.html',{'form':form,'recommended_users':recommended_users,'images':images})
 
 
 '''
@@ -73,20 +78,20 @@ def logout(request):
 '''
 it uplods the image
 '''
-def upload_image(request,image_id):
+def upload_image(request):
     try:
-        image = ImageForm.objects.get(pk=image_id)
+        image = ImageForm.objects.get()
     
     except ImageForm.DoesNotExist:
         return redirect('image not found')
     
     if request.method == 'POST':
-        form = UserImage(request.POST,request.FILES,instance=image)
+        form = UserImageForm(request.POST,request.FILES,instance=image)
         if form.is_valid():
             form.save()
             return render('user_post.html')
     else:
-        form = UserImage(instance=image)
+        form = UserImageForm(instance=image)
         return render(request,'image.html',{'form':form,'image':image})
     
 
@@ -102,7 +107,7 @@ def create_post(request):
         return redirect(request,'post')
     else:
         form = create_post()
-        return render(request,'login_success',{'form':form})
+        return render(request,'login_success.html',{'form':form})
 
 
 
@@ -110,16 +115,15 @@ def create_post(request):
 this field is created to upload image with caption
 '''
 def image_request(request):
-    form = UserImage()
+    form = UserImageForm()
     if request.method == 'POST':
-        form = UserImage(request.POST, request.FILES)    
+        form = UserImageForm(request.POST, request.FILES)    
         if form.is_valid():
             image = form.save()
             return render(request,'image.html',{'image':image})
     else:
-        form = UserImage()
-
-    return render(request,'image.html',{'form':form})
+        form = UserImageForm()
+        return render(request,'image.html',{'form':form})
 
 
 
@@ -130,7 +134,7 @@ with the username , comment , number of likes ,caption or image
 def post(request, first_name, last_name ):
     user = UserProfile.objects.get(first_name=first_name, last_name=last_name)
     if request.method == 'POST':
-        form = New_post(request.POST,request.FILES)
+        form = NewPostForm(request.POST,request.FILES)
         if form.is_valid():
             feed = form.save(commit=False)
             feed.user = user
@@ -138,7 +142,7 @@ def post(request, first_name, last_name ):
             return redirect(f'/{user.first_name}_{user.last_name}/')
 
     else:
-        form = New_post()
+        form = NewPostForm()
 
     feeds = Feeds.objects.filter(user=user)
     return render(request, 'user_post.html', {'user': user, 'feeds': feeds, 'form': form})
@@ -155,3 +159,27 @@ def left_Profile_Bar(request):
 '''settings bar'''
 def right_Profile_Bar(request):
     return render(request,'right_side_profilebar.html' )
+
+
+@login_required
+def friend_request(request,user_id):
+    from_user = request.user
+    to_user = request.objects.get(id=user_id)
+    sent_request,created = Friend_Request.objects.get_or_create(from_user=from_user,to_user=to_user)
+    if created:
+        return HttpResponse('Friend request sent')
+    else:
+        return HttpResponse('Already sent')
+
+
+
+@login_required
+def accept_friend_request(request,accept_id):
+    friend_request = Friend_Request.objects.get(id=accept_id)
+    if friend_request.to_user == request.user:
+        friend_request.to_user.to_friends.add(friend_request.from_user)
+        friend_request.from_user.friends.add(friend_request.to_user)
+        friend_request.delete()
+        return HttpResponse('friend request accepted')
+    else:
+        return HttpResponse('friend request declined')

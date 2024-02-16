@@ -1,19 +1,78 @@
-<!-- {% extends "home_page.html" %} -->
-
- {% load static %}
-
-
-<link href="{% static 'generic.css' %}" rel="stylesheet">
-
 {% block content %}
-<h1>{{ user.first_name }} {{ user.last_name }}</h1>
-<img src="{{ user_profile.profile_pic.url }}" alt="Profile Picture">
+<div class="container mt-5">
+    <form method="POST" enctype="multipart/form-data" class="post-create">  
+        {% csrf_token %}  
+        <div class="mb-3">
+            <label for="id_user_profile" class="form-label">User Profile:</label>
+            {{ form.user_profile }}
+        </div>
+        <div class="mb-3">
+            <label for="id_image_post" class="form-label">Image:</label>
+            {{ form.image_post }}
+        </div>
+        <div class="mb-3">
+            <label for="id_comment" class="form-label">Comment:</label>
+            {{ form.comment }}
+        </div>
+        <button type="submit" class="btn btn-primary post-btn">Post</button>
+    </form>
 
-<form method="post" action="{% url 'post' user_profile.first_name user_profile.last_name %}">
-  {% csrf_token %}
-  <input type="text" name="comment" placeholder="Your comment here...">
-  <button type="submit">Submit Comment</button>
-</form>
+    <div class="news-feed mt-5">
+        {% for post in posts %}
+        <div class="post">
+            <h2>{{ post.user_profile }}</h2>
+            <img src="{{ post.image_post.url }}" alt="{{ post.comment }}" class="img-fluid">
+            <p>{{ post.comment }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
 
 
-{% endblock %}
+<style>
+  .container {
+    max-width: 50%; /* Take half of the screen */
+    margin: auto; /* Center horizontally */
+}
+
+.post-create {
+    margin-bottom: 20px;
+}
+
+.form-label {
+    font-weight: bold;
+}
+
+.btn-primary {
+    background-color: #4267b2;
+    color: white;
+    padding: 8px 15px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.btn-primary:hover {
+    background-color: #53525f;
+}
+
+.news-feed .post {
+    margin-bottom: 20px;
+}
+
+.post h2 {
+    margin-bottom: 5px;
+}
+
+.post img {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 10px;
+}
+
+</style>
+
+{% endblock content %}
