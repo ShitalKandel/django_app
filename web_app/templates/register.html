@@ -1,26 +1,26 @@
+{% load static %}
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Registration</title>
-    {% load static %}
-    <link href="{% static 'style.css' %}" rel="stylesheet" >
+    <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
 </head>
 <body>
-    {% csrf_token %}
     <div class="container">
-        <form class="register-form" method="POST">
-            <img src="{% static 'psyco.png' %}" class="icon-media" alt="Psycho Media Icon">
+        <form method="POST" class="register-form">
             {% csrf_token %}
-            
+            <img src="{% static 'psycho.png' %}" alt="Psycho Media Icon" class="icon-media">
             <div class="title">
                 <h2>User Registration</h2>
             </div>
             {{ form.as_p }}
-            <button class="signin-btn" type="submit">Register</button>
+            <button class="signup-btn" type="submit">Register</button>
             <br><br>
-            <button class="login-btn" type ="submit">Sign In</button>
+            <button class="login-btn" type="submit">Sign In</button>
         </form>
     </div>
 </body>

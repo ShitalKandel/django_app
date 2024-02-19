@@ -2,44 +2,44 @@ from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 
+
 class UserProfile(AbstractUser):
-
-    # friends = models.ManyToManyField("UserProfile",blank=True)
-    password = models.CharField(max_length=100)
-    profile_pic = models.ImageField(upload_to="profile/pic/",blank=True,null=True)  
-
-    
-    def __str__(self):
-        return f"{self.first_name} {self.last_name}"
-    
+    profile_bio = models.TextField(blank=True, null=True)
+    profile_pic = models.ImageField(upload_to="profile/pic/", blank=True, null=True)
+    friends = models.ManyToManyField('self', symmetrical=True, blank=True)
 
 
-class ImageForm(models.Model):
-    # user_profile = models.ForeignKey(UserProfile,on_delete=models.CASCADE)
-    username = models.ForeignKey(UserProfile,on_delete=models.CASCADE,blank=True,null=True)
-    caption = models.CharField(max_length=100,blank=True,null=True)
-    imagefield = models.ImageField(upload_to='image',blank=True,null=True)
+class ImageUpload(models.Model):
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    caption = models.CharField(max_length=100, blank=True, null=True)
+    image = models.ImageField(upload_to='images/')
 
 
-    def get_username(self):
-        if self.username:
-            return f"{self.username.first_name} {self.username.last_name}"
-        return ""
-    
-
-class Feeds(models.Model):
-    user_profile = models.ForeignKey(UserProfile,on_delete=models.CASCADE,null=True,blank=True)
-    image_post = models.ImageField(upload_to='post/image',blank=True,null=True)
-    comment = models.CharField(max_length=2000)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,related_name='user_comment',blank=True,null=True)
+class Post(models.Model):
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    image = models.ForeignKey(ImageUpload, on_delete=models.CASCADE, blank=True, null=True)
+    caption = models.CharField(max_length=100)
+    date_posted = models.DateTimeField(auto_now_add=True)
+    likes = models.ManyToManyField(UserProfile, related_name='liked_posts', blank=True)
 
 
+class Comment(models.Model):
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
+    text = models.TextField()
+    commented_on = models.DateTimeField(auto_now_add=True)
 
-class Friend_Request(models.Model):
-    from_user = models.ForeignKey(UserProfile,related_name="from_user" ,on_delete=models.CASCADE)
-    to_user = models.ForeignKey(UserProfile,related_name="to_user",on_delete=models.CASCADE)
-    
 
-
-    
-    
+class FriendRequest(models.Model):
+    from_user = models.ForeignKey(UserProfile, related_name="sent_requests", on_delete=models.CASCADE)
+    to_user = models.ForeignKey(UserProfile, related_name="received_requests", on_delete=models.CASCADE)
+    ACCEPTED = 'Accepted'
+    PENDING = 'Pending'
+    REJECTED = 'Rejected'
+    STATUS_CHOICES = [
+        (ACCEPTED, 'Accepted'),
+        (PENDING, 'Pending'),
+        (REJECTED, 'Rejected')
+    ]
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=PENDING)
+    requested_at = models.DateTimeField(auto_now_add=True)

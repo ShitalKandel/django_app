@@ -1,63 +1,32 @@
+{% load static %}
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Facebook-like Sidebar</title>
-<style>
-/* Sidebar styles */
-.sidebar-right {
-  position: fixed;
-  top:   10%;
-  right:   0; 
-  height:   100%;
-  width:   23.33%; 
-  background-color: #e9eef8; 
-  color: #3b5998;
-  padding:   20px;
-  box-sizing: border-box;
-  overflow: auto;
-}
-
-
-.vertical-menu a {
-  display: block;
-  margin-bottom:  10px;
-}
-
-.vertical-menu a:last-child {
-  margin-right:  0;
-}
-
-.logout-button {
-  background-color: #065e74;
-  color: rgb(230,  133,  133);
-  border: none;
-  padding:  10px  20px;
-  cursor: pointer;
-  border-radius:  5px;
-}
-
-.logout-button:hover {
-  background-color: darkred;
-}
-
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Right Side Profile Bar</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
 </head>
 <body>
-  <div class="sidebar-right">
-    <div class="vertical-menu">
-      <a>Recommended</a>
-
-      
-      <ol>
-        {% for user in recommended_users %}
-        <ul>
-          <button type="submit">Add Friend</button><stong>{{user.first_name}} {{user.last_name}}</strong></ul>
-        {% endfor %}
-      </ol>
+    <div class="sidebar-right">
+        <div class="recommended-friends">
+            <h2>Recommended Friends</h2>
+            <ul>
+                {% for user in recommended_users %}
+                <li>
+                    <img src="#" alt="Profile Picture">
+                    <span>{{ user.first_name }} {{ user.last_name }}</span>
+                    <form method="POST" action="{% url 'web_app:add_friend' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="user_id" value="{{ user.id }}">
+                        <button type="submit">Add Friend</button>
+                    </form>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
-   
-  </div>
 </body>
 </html>

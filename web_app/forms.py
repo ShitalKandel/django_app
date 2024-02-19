@@ -1,19 +1,18 @@
 from django import forms
-from .models import *
-from django.views.generic import ListView
+from .models import UserProfile, ImageUpload, Post, Comment, FriendRequest
 
-class SignupForm(forms.Form):
-    first_name = forms.CharField(max_length=50)
-    last_name = forms.CharField(max_length=50)
-    email = forms.EmailField(max_length=150, required=True)
-    password = forms.CharField(widget=forms.PasswordInput)
+
+class SignupForm(forms.ModelForm):
     confirm_password = forms.CharField(widget=forms.PasswordInput)
+    username = forms.CharField(max_length=150)  # Add username field
+
+    class Meta:
+        model = UserProfile
+        fields = ['username', 'first_name', 'last_name', 'email', 'password']
+        widgets = {
+            'password': forms.PasswordInput(),
+        }
     
-
-    # class Meta:
-    #     model = UserProfile
-    #     fields = ['first_name', 'last_name', 'email', 'password']
-
     def clean(self):
         cleaned_data = super().clean()
         password = cleaned_data.get("password")
@@ -24,43 +23,52 @@ class SignupForm(forms.Form):
 
         return cleaned_data
 
-    def save(self):
-        first_name = self.cleaned_data.get("first_name")
-        last_name = self.cleaned_data.get("last_name")
-        email = self.cleaned_data.get("email")
-        password = self.cleaned_data.get("password")
-        username = self.cleaned_data
-
-        user = UserProfile.objects.create(first_name=first_name,last_name=last_name,email=email,password=password,username=username)
-       
-        return user 
-
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.set_password(self.cleaned_data["password"])
+        if commit:
+            user.save()
+        return user
 
 
 class LoginForm(forms.Form):
-    email = forms.EmailField(label="register-form",max_length=150)
-    password = forms.CharField(label="register-form",widget=forms.PasswordInput)
+    email = forms.EmailField()
+    password = forms.CharField(widget=forms.PasswordInput())
 
-
-class CustomFileInput(forms.FileInput):
-    template_name = 'image.html'
 
 class UserImageForm(forms.ModelForm):
-
-    imagefield = forms.FileField()
-    
     class Meta:
-        model = ImageForm
-        fields = ('username', 'caption', 'imagefield')
+        model = ImageUpload
+        fields = ['caption', 'image']
+        labels = {
+            'image': 'Upload Image',
+            'caption': 'Caption',
+        }
+
 
 class NewPostForm(forms.ModelForm):
     class Meta:
-        model = Feeds
-        fields = ['user_profile', 'image_post', 'user', 'comment']
+        model = Post
+        fields = ['caption', 'image']
         labels = {
-            'image_post': 'Image',
-            'comment': 'Comment',
+            'image': 'Upload Image',
+            'caption': 'Caption',
+        }
+
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['text']
+        labels = {
+            'text': 'Comment',
         }
         widgets = {
-            'comment': forms.Textarea(attrs={'placeholder': 'comment...'}),
+            'text': forms.TextInput(attrs={'placeholder': 'Add a comment...'}),
         }
+
+
+class FriendRequestForm(forms.ModelForm):
+    class Meta:
+        model = FriendRequest
+        fields = ['to_user']

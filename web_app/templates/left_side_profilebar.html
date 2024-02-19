@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -62,6 +64,8 @@
     <br><br>
     <div class="vertical-menu">
       <a>Friends</a>
+      <ol id = "friend-list">
+      </ol>
       <a>Posts</a>
       <a>Settings</a>
     </div>
@@ -70,5 +74,30 @@
     <button class="logout-button" >Logout</button>
     </form>
   </div>
+</body><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Left Side Profile Bar</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
+</head>
+<body>
+    <div class="sidebar-left">
+        <!-- Profile picture and user information -->
+        <div class="profile-info">
+            <img src="#" alt="Profile Picture" class="profile-picture">
+            <span>{{ request.user.first_name }} {{ request.user.last_name }}</span>
+        </div>
+        <!-- Navigation links -->
+        <div class="navigation-links">
+            <a href="#">Home</a>
+            <a href="#">Friends</a>
+            <a href="#">Messages</a>
+            <a href="#">Notifications</a>
+        </div>
+    </div>
 </body>
+</html>
+
 </html>

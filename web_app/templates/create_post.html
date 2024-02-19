@@ -1,0 +1,25 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Post</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
+</head>
+<body>
+    <div class="container">
+        <form method="POST" enctype="multipart/form-data" class="post-create">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <textarea id="caption" name="caption" placeholder="Create a post ..."></textarea>
+            <div class="upload-wrapper">
+                <label for="file-input" class="upload-icon"></label>
+                <input type="file" id="file-input" style="display: none;">
+                <button type="submit" class="post-btn">Post</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
