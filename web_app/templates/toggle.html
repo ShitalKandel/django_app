@@ -1,57 +1,131 @@
 <!DOCTYPE html>
 <html>
 <head>
-<style>
-ul {
-  list-style-type: none;
-  margin: auto;
-  padding: 0;
-  overflow: hidden;
-  background-color: #f0eaea;
-  width: 50%;
-  display: flex;
-}
-
-li {
-  border-right:3px solid #bbb;
-  color: black;
-  flex: 1;
-  text-align: center;
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js">
+$(document).ready(function() {
+    $('#notifications-link').click(function(event) {
+        event.preventDefault(); 
+        $.ajax({
+            url: "{% url 'web_app:notification' %}", 
+            type: "GET",
+            success: function(response) {
+                // Assuming the response is a list of notifications in JSON format
+                // You need to adjust this part based on the actual response format
+                var notifications = JSON.parse(response);
+                var notificationsHtml = '';
+                notifications.forEach(function(notification) {
+                    notificationsHtml += '<div>';
+                    notificationsHtml += '<p>' + notification.from_user + ' sent you a friend request</p>';
+                    notificationsHtml += '<button onclick="acceptRequest(' + notification.id + ')">Accept</button>';
+                    notificationsHtml += '<button onclick="declineRequest(' + notification.id + ')">Decline</button>';
+                    notificationsHtml += '</div>';
+                });
+                // Display notifications in a modal or other container
+                $('#notifications-modal').html(notificationsHtml).modal('show');
+            },
+            error: function(xhr, status, error) {
+                // Handle errors
+                console.error(xhr.responseText);
+            }
+        });
+    });
+});
+  </script>
+  <style>
+.sidebar-left {
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
-}h
-
-li:last-child {
-  border-right: none;
+  height: 80px; 
+  background-color: #1877f2;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  box-sizing: border-box;
 }
 
-li:nth-child(2){
-    text-align: center;
+.profile-picture {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 20px;
 }
 
+.profile-info span {
+  font-weight: bold;
+  color: #ffffff; 
+  margin-right: 6cm; 
+}
 
-li a {
-  display: block;
-  color: rgb(155, 105, 105);
-  text-align: center;
-  padding: 14px 16px;
+.navigation-links {
+  margin-right: auto;
+  display: flex;
+  width: 30%;
+}
+
+.navigation-links a {
+  color: #ffffff; 
   text-decoration: none;
+  margin-left: 20px;
 }
 
-li a:hover:not(.active) {
-  background-color: #999;
-  color: white;
+.navigation-links a:hover {
+  text-decoration: underline;
 }
 
+.setting-icon {
+  display: flex;
+  flex-direction: column;
+}
 
-</style>
+.setting-icon {
+      padding: 10px;
+    }
+    
+.menu {
+  width: 35px;
+  height: 5px;
+  background-color: #fff; 
+  margin: 6px 0;
+}
+    
+.setting-icon:hover .menu {
+  background-color: #bbb;
+}
+
+.setting-icon{
+margin-right: 0%;
+}
+
+.search {
+  margin-right: 0;
+  width: 25%; 
+}
+
+  </style>
 </head>
 <body>
+    <div class="sidebar-left">
+        <div class="profile-info">
+            <img src="#" alt="Profile Picture" class="profile-picture">
+            <span>{{ request.user.first_name }} {{ request.user.last_name }}</span>
+        </div>
+        <input class="search" type="search" placeholder="Search">
+        <div class="navigation-links">
+            <a href="#">Home</a>
+            <a href="#">Friends</a>
+            <a href="#">Messages</a>
 
-<ul>
-  <li><a class="active" href="#home">Home</a></li>
-  <li><a href="#news">Messanger</a></li>
-  <li><a href="#contact">Friend</a></li>
-</ul>
+            <a href="#" id="notifications-link">Notifications</a>
+        </div>
+        <div class="setting-icon">
+          <div class="menu"></div>
+          <div class="menu"></div>
+          <div class="menu"></div>
+        </div>
+    </div>
 
 </body>
 </html>

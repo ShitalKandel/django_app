@@ -14,4 +14,6 @@ urlpatterns = [
     path('add_friend/', views.add_friend, name='add_friend'),
     path('accept_friend_request/<int:request_id>/', views.accept_friend_request, name='accept_friend_request'),
     path('reject_friend_request/<int:request_id>/', views.reject_friend_request, name='reject_friend_request'),
+    path('notification/',views.notify,name='notification'),
+    # path('',views.index, name='index'),
 ]

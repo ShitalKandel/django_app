@@ -6,10 +6,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Success</title>
-    <link rel="stylesheet"  href="{% static 'styles.css' %}">
+    <link rel="stylesheet"  href="{% static 'style.css' %}">
 </head>
 <body>
-
+    {% include 'toggle.html'  %}
+    <br><br>
     {% include 'left_side_profilebar.html' %}
     {% include 'create_post.html' %}
     {% include 'right_side_profilebar.html' %}

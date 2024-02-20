@@ -1,13 +1,20 @@
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
+from .manager import UserProfileManager
 
 
 class UserProfile(AbstractUser):
+    email = models.EmailField(unique = True, blank=False, null=True)
     profile_bio = models.TextField(blank=True, null=True)
     profile_pic = models.ImageField(upload_to="profile/pic/", blank=True, null=True)
     friends = models.ManyToManyField('self', symmetrical=True, blank=True)
+    objects = UserProfileManager()
 
+
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
 
 class ImageUpload(models.Model):
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
@@ -30,16 +37,19 @@ class Comment(models.Model):
     commented_on = models.DateTimeField(auto_now_add=True)
 
 
-class FriendRequest(models.Model):
-    from_user = models.ForeignKey(UserProfile, related_name="sent_requests", on_delete=models.CASCADE)
-    to_user = models.ForeignKey(UserProfile, related_name="received_requests", on_delete=models.CASCADE)
+
+class Status(models.TextChoices):
     ACCEPTED = 'Accepted'
     PENDING = 'Pending'
     REJECTED = 'Rejected'
-    STATUS_CHOICES = [
-        (ACCEPTED, 'Accepted'),
-        (PENDING, 'Pending'),
-        (REJECTED, 'Rejected')
-    ]
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=PENDING)
+
+
+class FriendRequest(models.Model):
+    from_user = models.ForeignKey(UserProfile, related_name="sent_requests", on_delete=models.CASCADE)
+    to_user = models.ForeignKey(UserProfile, related_name="received_requests", on_delete=models.CASCADE)
+    status = models.CharField(max_length=10, choices=Status, default=Status.PENDING)
     requested_at = models.DateTimeField(auto_now_add=True)
+
+
+    def __str__(self):
+        return self.from_user.first_name

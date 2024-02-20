@@ -71,4 +71,4 @@ class CommentForm(forms.ModelForm):
 class FriendRequestForm(forms.ModelForm):
     class Meta:
         model = FriendRequest
-        fields = ['to_user']
+        fields = ['to_user','from_user']

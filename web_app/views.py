@@ -11,11 +11,11 @@ def register(request):
         form = SignupForm(request.POST)
         if form.is_valid():
             username = form.cleaned_data['username']  # Access the username field
-            form.save()
+            UserProfile.object.create_user('email','password')
             return redirect('web_app:login_success')
     else:
         form = SignupForm()
-    return render(request, 'register.html', {'form': form})
+    return render(request, 'register.html', {'form': form,'username':username})
 
 @login_required
 def login_view(request):
@@ -28,7 +28,7 @@ def login_view(request):
             user = authenticate(request, email=email, password=password)
             if user:
                 login(request, user)
-                return redirect('login_success')
+                return redirect('web_app:login_success')
             else:
                 error_message = "Invalid email or password."
     else:
@@ -53,7 +53,16 @@ def login_success(request):
     else:
         form = UserImageForm()
     recommended_users = UserProfile.objects.exclude(id=request.user.id)
-    return render(request, 'login_success.html', {'form': form, 'recommended_users': recommended_users})
+    # if FriendRequest.objects.filter(id=request.user_id).exists():
+    # try:
+        # friend_list = FriendRequest.objects.get(user_id=request.user_id)
+    # except FriendRequest.DoesNotExist:
+        # return "the user_id doesn't exists ".format(request.user_id)
+    #     # friend_list = None
+    # if friend_list in FriendRequest:
+    #     friend_list = FriendRequest.objects.filter(to_user=request.user, status=FriendRequest.PENDING)
+    #     return render(request, 'toggle.html', {'pending_requests': friend_list})
+    return render(request, 'login_success.html',context= {'form': form, 'recommended_users': recommended_users})
 
 
 @login_required
@@ -97,11 +106,10 @@ def add_friend(request):
             friend_request = form.save(commit=False)
             friend_request.from_user = request.user
             friend_request.save()
-            return redirect('login_success')
+            return redirect('web_app:notifications')
     else:
         form = FriendRequestForm()
-    return render(request, 'add_friend.html', {'form': form})
-
+    return render(request, 'left_side_profilebar.html', {'form': form})
 
 @login_required
 def accept_friend_request(request, request_id):
@@ -110,16 +118,24 @@ def accept_friend_request(request, request_id):
         friend_request.to_user.friends.add(friend_request.from_user)
         friend_request.from_user.friends.add(friend_request.to_user)
         friend_request.delete()
-        return HttpResponse('Friend request accepted')
+        return redirect('web_app:accept_friend_request') 
     else:
         return HttpResponse('You are not authorized to accept this request.')
-
 
 @login_required
 def reject_friend_request(request, request_id):
     friend_request = FriendRequest.objects.get(id=request_id)
     if friend_request.to_user == request.user:
         friend_request.delete()
-        return HttpResponse('Friend request rejected')
+        return redirect('web_app:login_success')  
     else:
         return HttpResponse('You are not authorized to reject this request.')
+
+@login_required
+def notify(request):
+    pending_requests = FriendRequest.objects.filter(to_user=request.user, status=FriendRequest.PENDING)
+    return render(request, 'toggle.html', {'pending_requests': pending_requests})
+
+# @login_required
+# def index(request):
+#     return render(request,'toggle.html')

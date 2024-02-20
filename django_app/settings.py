@@ -33,6 +33,7 @@ ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
+    "daphne",
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -42,6 +43,16 @@ INSTALLED_APPS = [
     # 'crispy_forms',
     'web_app',
 ]
+
+ASGI_APPLICATION = 'django_app.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default' : {
+        'BACKEND': "channels.layers.InMemoryChannelLayer"
+    }
+}
+
+
 
 # CRISPY_TEMPLATE_PACK = 'bootstrap'
 
