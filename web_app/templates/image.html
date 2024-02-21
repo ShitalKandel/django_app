@@ -1,90 +1,71 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Right Side Profile Bar</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f2f5;
-        }
-
-        .container {
-            margin-bottom: 20px;
-            max-width: 1000px; 
-            margin: auto; /* Center horizontally */
-            background-color: #fff;
+        .sidebar-right {
+            position: fixed;
+            top: 10%;
+            right: 0;
+            height: 100%;
+            width: 23.33%; 
+            background-color: #e9eef8;
+            color: #3b5998;
             padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin-top: 100px; /* Adjust distance from top */
+            box-sizing: border-box;
+            overflow: auto;
         }
 
-        .post-create {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .upload-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .btn-secondary {
-            background-color: #e4e6eb;
-            color: #333;
-            padding: 10px;
+        .profile-picture {
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
-            cursor: pointer;
+            object-fit: cover; 
+            background-size: cover; 
+            background-position: center; 
+            background-repeat: no-repeat;
+            margin-bottom: 20px;
         }
 
-        .btn-secondary::before {
-            content: '\2716'; /* Unicode for multiplication sign (X) */
-            font-size: 20px;
+        .post {
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
         }
 
-        #id_imagefield {
-            display: none;
+        .post img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 10px;
         }
 
-        .btn-primary {
-            background-color: #4267b2;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .btn-primary:hover {
-            background-color: #3a5a9e;
+        .post .caption {
+            font-weight: bold;
+            margin-bottom: 5px;
         }
     </style>
 </head>
 <body>
-<div class="container mt-5">
-    <form method="POST" enctype="multipart/form-data" class="post-create">
-        {% csrf_token %}
-        <div class="mb-3">
-            {{ form.as_p }}
+    <div class="sidebar-right">
+        <div class="recommended-friends">
+            <h2>Recommended Friends</h2>
+            <!-- Recommended friends list goes here -->
         </div>
-        <div class="upload-wrapper">
-            <label for="id_imagefield" class="upload-icon btn btn-secondary"></label>
-            <input type="file" name="imagefield" id="id_imagefield">
-            <button type="submit" class="btn btn-primary post-btn">Post</button>
-        </div>
-    </form>
 
-    {% if image %}
-    <div class="mt-5">
-        <h2>{{ image.username }}</h2>
-        <h3>{{ image.caption }}</h3>
-        <img src="{{ image.imagefield.url }}" alt="{{ image.caption }}" style="max-height:300px" class="img-fluid">
+        <div class="posts">
+            <h2>Posts</h2>
+            {% for post in posts %}
+            <div class="post">
+                <img src="{{ post.image.url }}" alt="Post Image">
+                <p class="caption">Posted by: {{ post.user.first_name }} {{ post.user.last_name }}</p>
+                <p>{{ post.caption }}</p>
+            </div>
+            {% endfor %}
+        </div>
     </div>
-    {% endif %}
-</div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </body>
 </html>

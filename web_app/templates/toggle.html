@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <Script>
 $(document).ready(function() {
     $('#notifications-link').click(function(event) {
         event.preventDefault(); 
+        var url = $(this).data('url');
+        console.log('url')
         $.ajax({
-            url: "{% url 'web_app:notification' %}", 
+            url: url, 
             type: "GET",
             success: function(response) {
-                // Assuming the response is a list of notifications in JSON format
-                // You need to adjust this part based on the actual response format
-                var notifications = JSON.parse(response);
+                var notifications = response;
                 var notificationsHtml = '';
                 notifications.forEach(function(notification) {
                     notificationsHtml += '<div>';
@@ -20,16 +21,34 @@ $(document).ready(function() {
                     notificationsHtml += '<button onclick="declineRequest(' + notification.id + ')">Decline</button>';
                     notificationsHtml += '</div>';
                 });
-                // Display notifications in a modal or other container
                 $('#notifications-modal').html(notificationsHtml).modal('show');
             },
             error: function(xhr, status, error) {
-                // Handle errors
+                console.error(xhr.responseText);
+            }
+        });
+    });
+
+    // AJAX for adding friend
+    $('.add-friend-form').submit(function(event) {
+        event.preventDefault();
+        var form = $(this);
+        var url = form.attr('action');
+        $.ajax({
+            url: url,
+            type: form.attr('method'),
+            data: form.serialize(),
+            success: function(response) {
+                // Handle success (maybe update UI to show friend added)
+                console.log('Friend request sent successfully');
+            },
+            error: function(xhr, status, error) {
                 console.error(xhr.responseText);
             }
         });
     });
 });
+
   </script>
   <style>
 .sidebar-left {
@@ -113,12 +132,12 @@ margin-right: 0%;
             <span>{{ request.user.first_name }} {{ request.user.last_name }}</span>
         </div>
         <input class="search" type="search" placeholder="Search">
+        {% csrf_token %}
         <div class="navigation-links">
             <a href="#">Home</a>
             <a href="#">Friends</a>
             <a href="#">Messages</a>
-
-            <a href="#" id="notifications-link">Notifications</a>
+            <a href="#" id="notifications-link" data-url="{% url 'web_app:notification' %}">Notifications</a>
         </div>
         <div class="setting-icon">
           <div class="menu"></div>
@@ -126,7 +145,6 @@ margin-right: 0%;
           <div class="menu"></div>
         </div>
     </div>
-
 </body>
 </html>
 

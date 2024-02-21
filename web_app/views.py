@@ -3,19 +3,24 @@ from django.contrib.auth import login, authenticate, logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from .forms import SignupForm, LoginForm, UserImageForm, NewPostForm, FriendRequestForm
 from .models import UserProfile, FriendRequest
+from django.http import JsonResponse
+
 
 
 @login_required
 def register(request):
+    username = None  
     if request.method == 'POST':
         form = SignupForm(request.POST)
         if form.is_valid():
-            username = form.cleaned_data['username']  # Access the username field
-            UserProfile.object.create_user('email','password')
+            # username = form.cleaned_data['username']  
+            UserProfile.objects.create_user(email='email', password='password')  
+            username = form.save()
             return redirect('web_app:login_success')
     else:
         form = SignupForm()
-    return render(request, 'register.html', {'form': form,'username':username})
+    return render(request, 'register.html', {'form':form,'username': username})
+
 
 @login_required
 def login_view(request):
@@ -68,14 +73,15 @@ def login_success(request):
 @login_required
 def upload_image(request):
     if request.method == 'POST':
-        form = UserImageForm(request.POST, request.FILES)
+        form = NewPostForm(request.POST, request.FILES)
         if form.is_valid():
-            form.instance.user = request.user
-            form.save()
-            return redirect('login_success')
+            post = form.save(commit=False)
+            post.user = request.user
+            post.save()
+            return redirect('web_app:login_success')  # Redirect to the appropriate page after uploading the image
     else:
-        form = UserImageForm()
-    return render(request, 'image.html', {'form': form})
+        form = NewPostForm()
+    return render(request, 'upload_image.html', {'form': form})
 
 
 @login_required
@@ -101,40 +107,56 @@ def user_profile(request):
 @login_required
 def add_friend(request):
     if request.method == 'POST':
-        form = FriendRequestForm(request.POST)
-        if form.is_valid():
-            friend_request = form.save(commit=False)
-            friend_request.from_user = request.user
+        to_user_id = request.POST.get('to_user')
+        to_user = UserProfile.objects.get(pk=to_user_id)
+        existing_request = FriendRequest.objects.filter(from_user=request.user, to_user=to_user, status=FriendRequest.to_user).exists()
+        if existing_request:
+            return JsonResponse({'success': False, 'error': 'Friend request already sent'})
+        else:
+            friend_request = FriendRequest.objects.create(from_user=request.user, to_user=to_user)
             friend_request.save()
-            return redirect('web_app:notifications')
+            return JsonResponse({'success': True})
     else:
-        form = FriendRequestForm()
-    return render(request, 'left_side_profilebar.html', {'form': form})
+        return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
 @login_required
 def accept_friend_request(request, request_id):
-    friend_request = FriendRequest.objects.get(id=request_id)
+    try:
+        friend_request = FriendRequest.objects.get(id=request_id)
+    except FriendRequest.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Friend request does not exist'})
+
     if friend_request.to_user == request.user:
         friend_request.to_user.friends.add(friend_request.from_user)
         friend_request.from_user.friends.add(friend_request.to_user)
-        friend_request.delete()
-        return redirect('web_app:accept_friend_request') 
+        #accepted update
+        friend_request.status = FriendRequest.ACCEPTED
+        friend_request.save()
+        return JsonResponse({'success': True})
     else:
-        return HttpResponse('You are not authorized to accept this request.')
+        return JsonResponse({'success': False, 'error': 'You are not authorized to accept this request.'})
+
 
 @login_required
 def reject_friend_request(request, request_id):
-    friend_request = FriendRequest.objects.get(id=request_id)
+    try:
+        friend_request = FriendRequest.objects.get(id=request_id)
+    except FriendRequest.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Friend request does not exist'})
+
     if friend_request.to_user == request.user:
         friend_request.delete()
-        return redirect('web_app:login_success')  
+        return JsonResponse({'success': True})
     else:
-        return HttpResponse('You are not authorized to reject this request.')
+        return JsonResponse({'success': False, 'error': 'You are not authorized to reject this request.'})
+
 
 @login_required
 def notify(request):
-    pending_requests = FriendRequest.objects.filter(to_user=request.user, status=FriendRequest.PENDING)
-    return render(request, 'toggle.html', {'pending_requests': pending_requests})
+    pending_requests = FriendRequest.objects.filter(to_user=request.user, status=FriendRequest.status)
+    notifications = [{'from_user': request.from_user.username, 'id': request.id} for request in pending_requests]
+    return JsonResponse(notifications, safe=False)
+
 
 # @login_required
 # def index(request):

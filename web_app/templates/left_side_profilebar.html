@@ -63,13 +63,15 @@
     <!-- <strong>{{ request.user.first_name }} {{request.user.last_name}}</strong> -->
     <br><br>
     <div class="vertical-menu">
-      <a>Friends</a>
+      <a data-url = "web_app:accept_friend_request">Friends
       <ol id = "friend-list">
+        {{ friend_request.to_user}}
       </ol>
+    </a>
       <a>Posts</a>
       <a>Settings</a>
     </div>
-    <form action="{% url 'web_app:logout' %}" method="POST">
+    <form action="{% url 'web_app:login' %}" method="GET">
       {% csrf_token %}
     <button class="logout-button" >Logout</button>
     </form>
