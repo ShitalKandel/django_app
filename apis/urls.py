@@ -7,6 +7,6 @@ urlpatterns = [
     path('login-serializer/',views.UserLoginView.as_view()),
     path('register-serializer/',views.RegisterView.as_view()),
     path('reset-password/',views.ChangePasswordView.as_view()),
-    path("<phone>/", views.getPhoneNumbeRegister.as_view()),
-    path("time_based/<phone>/", views.getPhoneNumberRegistered_TimeBase.as_view()),
+    path("<phone>/", views.VerifyOTPView.as_view()),
+    # path("your-otp/", views.Generate_OTP.as_view()),
 ]

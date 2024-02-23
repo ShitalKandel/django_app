@@ -126,10 +126,10 @@ class RegisterView(APIView):
     def post(self, request):
         serializer = RegistrationSerializer(data=request.data)
         if serializer.is_valid():
-            email = serializer.validated_data.get('phone_number')
-            otp = Generate_OTP.generate_otp()
+            email = serializer.validated_data.get('email')
+            otp = VerifyOTPView.generate_otp()
             OTP_Verification.objects.create(email=email,otp=otp)
-            return Response({"message": "OTP sent successfully"}, status=status.HTTP_200_OK)
+            return Response({"Your otp":{otp},"message": "OTP sent successfully"}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     # def generate_otp(self, phone_number):
@@ -161,6 +161,7 @@ class VerifyOTPView(APIView):
             if otp_verification.otp == otp_code:
                 # OTP is valid, create token and send it to user
                 token = self.create_token(email)
+                otp = self.generate_otp()
                 return Response({"token": token, "created": True}, status=status.HTTP_200_OK)
             else:
                 return Response({"message": "Invalid OTP"}, status=status.HTTP_400_BAD_REQUEST)
@@ -172,10 +173,7 @@ class VerifyOTPView(APIView):
         token, created = Token.objects.get_or_create(user=user)
 
         return token.key
-    
 
-class Generate_OTP:
-    @staticmethod
     def generate_otp(length=6):
         character = string.digits
         otp = " ".join(random.choice(character) for _ in range (length))
