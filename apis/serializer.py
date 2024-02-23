@@ -7,6 +7,7 @@ from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import get_user_model
+from .models import OTP_Verification
 
 
 
@@ -73,6 +74,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
     # )
     # password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
     password2 = serializers.CharField(write_only=True, required=True)
+    otp = serializers.CharField(read_only=True)
 
     class Meta:
         model = UserProfile
@@ -81,10 +83,12 @@ class RegistrationSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         if attrs['password'] != attrs['password2']:
             raise serializers.ValidationError("Password fields didn't match.")
+        # otp = attrs.get('otp')
+        email = attrs.get('email')
+        # if not self.validate_otp(email,otp):
+        #     raise serializers.ValidationError("Invalid OTP.")
         return attrs
     
-    # def validate_email(self,value):
-        
 
     def validate_email(self, value):
         if UserProfile.objects.filter(email=value).exists():
@@ -100,6 +104,24 @@ class RegistrationSerializer(serializers.ModelSerializer):
             password=password,
         )
         return user
+    
+    def get_otp(self):
+        otp = OTP_Verification.otp
+        return otp
+    
+    def validate_otp(self,email,otp):
+        try:
+            otp_validate = OTP_Verification.objects.get(email=email)
+            if otp_validate.isVerified or otp_validate.counter > 3:
+                raise serializers.ValidationError("OTP has already been used or expired")
+            if otp_validate.otp != otp:
+                raise serializers.ValidationError("Invalid OTP.")
+            otp_validate.isVerified=True
+            otp_validate.save()
+
+            return True
+        except OTP_Verification.DoesNotExist:
+            raise serializers.ValidationError("No OTP found for this email.")
 
 
 class ChangePasswordSerializer(serializers.Serializer):

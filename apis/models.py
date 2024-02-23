@@ -2,6 +2,8 @@ from datetime import datetime
 from django.db import models
 from pygments.lexers import get_all_lexers
 from pygments.styles import get_all_styles
+import random
+from web_app.models import UserProfile
 # from django.contrib.auth.models import AbstractUser
 
 class Comment(object):
@@ -41,9 +43,13 @@ class Snippet(models.Model):
 
 '''OTP verification for user registeration'''
 class OTP_Verification(models.Model):
-    email = models.IntegerField(blank=False)
+    user = models.ForeignKey(UserProfile,on_delete=models.CASCADE,null=True)
+    # email = models.EmailField(blank=False)
     isVerified = models.BooleanField(blank=False,default=False)
-    counter = models.IntegerField(default=0,blank=False)
-
+    counter = models.IntegerField(default=0,blank=True)
+    otp = models.IntegerField(null=True)
+    
     def __str__(self):
-        return str(self.email)
+        return str(self.otp)
+    
+

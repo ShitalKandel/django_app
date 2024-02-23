@@ -18,8 +18,10 @@ from datetime import datetime
 from django.core.exceptions import ObjectDoesNotExist
 import pyotp
 from .models import OTP_Verification
-import base64
 import string,random
+from django.core.mail import send_mail
+from django.conf import settings    
+
 
 
 
@@ -121,23 +123,34 @@ class UserLoginView(APIView):
             return Response({'error':'Invalid credentials'},status=status.HTTP_401_UNAUTHORIZED)
 
 
+def generate_otp():
+    character = string.digits
+    otp = str("".join(random.choice(character) for _ in range(6)))
+    return otp
+
+
 '''Registration Using Serializer'''
 class RegisterView(APIView):
     def post(self, request):
-        serializer = RegistrationSerializer(data=request.data)
-        if serializer.is_valid():
-            email = serializer.validated_data.get('email')
-            otp = VerifyOTPView.generate_otp()
-            OTP_Verification.objects.create(email=email,otp=otp)
-            return Response({"Your otp":{otp},"message": "OTP sent successfully"}, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        if request.method == 'POST':
+            serializer= RegistrationSerializer(data=request.data)
+            if serializer.is_valid():
+                email = serializer.validated_data.get('email')
+                user =serializer.save()
+                otp = generate_otp()
 
-    # def generate_otp(self, phone_number):
-    #     otp = pyotp.random_base32()
-    #     OTP_Verification.objects.create(phone_number=phone_number, otp=otp)
-    #     return otp
-    
-
+                # otp = OTP_Verification
+                OTP_Verification.objects.create(user=user,otp=otp)
+                return Response({"Your otp":otp,"message": "OTP sent successfully"}, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+    def send_otp(self,email,otp):
+        subject = 'OTP  for validation.'
+        message = f"your otp is {otp}"
+        from_email = settings.EMAIL_HOST_USER
+        receipt = email
+        send_mail(subject,message,from_email,receipt)
+        return otp
 
 class ChangePasswordView(APIView):
     permission_classes = (IsAuthenticated,)
@@ -161,8 +174,8 @@ class VerifyOTPView(APIView):
             if otp_verification.otp == otp_code:
                 # OTP is valid, create token and send it to user
                 token = self.create_token(email)
-                otp = self.generate_otp()
-                return Response({"token": token, "created": True}, status=status.HTTP_200_OK)
+                otp_code = self.generate_otp()
+                return Response({"token": token,"otp":otp_code, "created": True}, status=status.HTTP_200_OK)
             else:
                 return Response({"message": "Invalid OTP"}, status=status.HTTP_400_BAD_REQUEST)
         except OTP_Verification.DoesNotExist:
@@ -171,14 +184,9 @@ class VerifyOTPView(APIView):
     def create_token(self, email):
         user = UserProfile.objects.get(email=email)
         token, created = Token.objects.get_or_create(user=user)
-
         return token.key
 
-    def generate_otp(length=6):
-        character = string.digits
-        otp = " ".join(random.choice(character) for _ in range (length))
-        return otp
-
+  
 
 # class generateKey:
 #     @staticmethod
