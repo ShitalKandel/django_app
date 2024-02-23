@@ -6,7 +6,6 @@ from .models import UserProfile, FriendRequest
 from django.http import JsonResponse
 
 
-
 @login_required
 def register(request):
     # username = None  
