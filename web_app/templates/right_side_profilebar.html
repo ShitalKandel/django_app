@@ -78,7 +78,7 @@
                                 data: JSON.stringify({'to_user': toUserId},{CSRFT : getCSRFTokenValue()}),
                                 contentType: 'application/json',
                                 success: function(response) {
-                                    console.log('Notification sent successfully');
+                                    console.log('Notification sent successfully');  
                                 },
                                 error: function(xhr, status, error) {
                                     console.error(xhr.responseText);

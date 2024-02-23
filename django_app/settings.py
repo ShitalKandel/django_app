@@ -39,6 +39,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'apis',
+    # 'rest_framework',
+
     # 'crispy_bootstrap5',
     # 'crispy_forms',
     'web_app',
@@ -51,7 +56,15 @@ CHANNEL_LAYERS = {
         'BACKEND': "channels.layers.InMemoryChannelLayer"
     }
 }
+from rest_framework.authentication import TokenAuthentication
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES':[
+        # 'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
+        'rest_framework.authentication.TokenAuthentication',
+
+    ],
+}
 
 
 # CRISPY_TEMPLATE_PACK = 'bootstrap'

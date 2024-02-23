@@ -9,17 +9,17 @@ from django.http import JsonResponse
 
 @login_required
 def register(request):
-    username = None  
+    # username = None  
     if request.method == 'POST':
         form = SignupForm(request.POST)
         if form.is_valid():
             # username = form.cleaned_data['username']  
-            UserProfile.objects.create_user(email='email', password='password')  
-            username = form.save()
+            # UserProfile.objects.create_user(email='email', password='password')  
+            form.save()
             return redirect('web_app:login_success')
     else:
         form = SignupForm()
-    return render(request, 'register.html', {'form':form,'username': username})
+    return render(request, 'register.html', {'form':form,})
 
 
 @login_required

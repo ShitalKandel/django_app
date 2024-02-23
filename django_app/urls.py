@@ -22,7 +22,8 @@ from django.urls import path,include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',include("web_app.urls",namespace="web_app")),
-    
+    path('api-auth/', include('rest_framework.urls')),
+    path('',include('apis.urls')),
 ]
 
 urlpatterns+= static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

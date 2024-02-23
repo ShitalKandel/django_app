@@ -10,8 +10,7 @@ class UserProfile(AbstractUser):
     profile_pic = models.ImageField(upload_to="profile/pic/", blank=True, null=True)
     friends = models.ManyToManyField('self', symmetrical=True, blank=True)
     objects = UserProfileManager()
-
-
+    username=None
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
