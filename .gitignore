@@ -1,6 +1,9 @@
 db.sqlite3
 __pycache__
-social_media/
+/social_media
 static_root
 /migrations
 .env
+/media
+/static
+/static_root
