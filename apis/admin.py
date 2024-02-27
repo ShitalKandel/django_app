@@ -1,6 +1,5 @@
 from django.contrib import admin
-from .models import OTP_Verification
+from apis.models import OTP_VerificationModel
 
-# Register your models here.
 
-admin.site.register(OTP_Verification)
+admin.site.register(OTP_VerificationModel)

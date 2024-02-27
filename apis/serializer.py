@@ -1,13 +1,13 @@
 from rest_framework import serializers
-from .models import Account
-from apis.models import Snippet, LANGUAGE_CHOICES,STYLE_CHOICES
-from web_app.models import UserProfile
+from apis.models import AccountModel
+from apis.models import SnippetModel, LANGUAGE_CHOICES,STYLE_CHOICES
+from facebook_clone.models import UserProfile
 from rest_framework import serializers
-from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
-from django.contrib.auth.hashers import make_password
 from django.contrib.auth import get_user_model
-from .models import OTP_Verification
+from apis.models import OTP_VerificationModel
+from apis.models import ItemModel,Item_locationModel
+from django.core.exceptions import ValidationError
 
 
 
@@ -23,7 +23,7 @@ class CommentSerializer(serializers.Serializer):
 #modelserializer
 class AccountSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Account 
+        model = AccountModel 
         fields = ['user_id','account_name','user','created']
 
 
@@ -37,7 +37,7 @@ class SnippetSerializer(serializers.Serializer):
 
     def create(self,validated_date):
         '''another instance of snippet, validate data'''
-        return Snippet.objects.create(**validated_date)
+        return SnippetModel.objects.create(**validated_date)
     
     def update(self,instance,validated_date):
         '''update and return an existing snippet instance , validate data '''
@@ -53,7 +53,7 @@ class SnippetSerializer(serializers.Serializer):
 '''Model Serializer'''
 class SnippetModel_Serializer(serializers.ModelSerializer):
     class Meta:
-        model = Snippet
+        model = SnippetModel
         fields= ['id','title','code','linenos','language','style']
 
 
@@ -68,11 +68,7 @@ class UserSerializer(serializers.ModelSerializer):
 UserProfile = get_user_model()
 
 class RegistrationSerializer(serializers.ModelSerializer):
-    # email = serializers.EmailField(
-    #     required=True,
-    #     validators=[UniqueValidator(queryset=UserProfile.objects.all())]
-    # )
-    # password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
+
     password2 = serializers.CharField(write_only=True, required=True)
     otp = serializers.CharField(read_only=True)
 
@@ -106,12 +102,12 @@ class RegistrationSerializer(serializers.ModelSerializer):
         return user
     
     def get_otp(self):
-        otp = OTP_Verification.otp
+        otp = OTP_VerificationModel.otp
         return otp
     
     def validate_otp(self,email,otp):
         try:
-            otp_validate = OTP_Verification.objects.get(email=email)
+            otp_validate = OTP_VerificationModel.objects.get(email=email)
             if otp_validate.isVerified or otp_validate.counter > 3:
                 raise serializers.ValidationError("OTP has already been used or expired")
             if otp_validate.otp != otp:
@@ -120,7 +116,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
             otp_validate.save()
 
             return True
-        except OTP_Verification.DoesNotExist:
+        except OTP_VerificationModel.DoesNotExist:
             raise serializers.ValidationError("No OTP found for this email.")
 
 
@@ -154,3 +150,26 @@ class OTPVerificationSerializer(serializers.Serializer):
                 
 
 
+
+class ItemSerialzer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ItemModel
+        fields = '__all__'
+
+
+
+
+class LocationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Item_locationModel
+        fields = '__all__'
+
+
+    def perform_create(self, serializer):
+        location_name = serializer.validated_data.get('location_name')
+        if len(location_name) < 5:
+            raise ValidationError("Location name must be 5 characters or more.")
+        serializer.save()
+
+    

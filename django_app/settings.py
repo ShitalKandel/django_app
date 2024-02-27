@@ -46,7 +46,7 @@ INSTALLED_APPS = [
 
     # 'crispy_bootstrap5',
     # 'crispy_forms',
-    'web_app',
+    'facebook_clone',
 ]
 
 ASGI_APPLICATION = 'django_app.asgi.application'
@@ -130,7 +130,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-AUTH_USER_MODEL = 'web_app.UserProfile'
+AUTH_USER_MODEL = 'facebook_clone.UserProfile'
 
 
 # Internationalization

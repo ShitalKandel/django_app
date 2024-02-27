@@ -1,5 +1,5 @@
 from django import forms
-from .models import UserProfile, ImageUpload, Post, Comment, FriendRequest
+from facebook_clone.models import UserProfile, ImageUpload, Post, Comment, FriendRequest
 
 
 class SignupForm(forms.ModelForm):

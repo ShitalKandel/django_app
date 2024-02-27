@@ -1,7 +1,7 @@
 from django.urls import path
-from . import views
+from facebook_clone import views
 
-app_name = 'web_app'
+app_name = 'facebook_clone'
 
 urlpatterns = [
     path('register/', views.register, name='register'),

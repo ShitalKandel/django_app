@@ -2,8 +2,8 @@ from datetime import datetime
 from django.db import models
 from pygments.lexers import get_all_lexers
 from pygments.styles import get_all_styles
-import random
-from web_app.models import UserProfile
+from facebook_clone.models import UserProfile
+
 # from django.contrib.auth.models import AbstractUser
 
 class Comment(object):
@@ -16,7 +16,7 @@ comment = Comment(email='kandelshittal@gmail.com',content='Bark')
 
 
         
-class Account(models.Model):
+class AccountModel(models.Model):
     user_id=models.IntegerField()
     account_name=models.CharField(max_length=50)
     user=models.CharField(max_length=100)
@@ -29,7 +29,7 @@ LANGUAGE_CHOICES = sorted([(item[1][0], item[0]) for item in LEXERS])
 STYLE_CHOICES = sorted([(item, item) for item in get_all_styles()])
 
 
-class Snippet(models.Model):
+class SnippetModel(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=100, blank=True, default='')
     code = models.TextField()
@@ -42,7 +42,7 @@ class Snippet(models.Model):
 
 
 '''OTP verification for user registeration'''
-class OTP_Verification(models.Model):
+class OTP_VerificationModel(models.Model):
     user = models.ForeignKey(UserProfile,on_delete=models.CASCADE,null=True)
     # email = models.EmailField(blank=False)
     isVerified = models.BooleanField(blank=False,default=False)
@@ -51,5 +51,21 @@ class OTP_Verification(models.Model):
     
     def __str__(self):
         return str(self.otp)
-    
 
+
+
+class Item_locationModel(models.Model):
+    location_name = models.CharField(unique=True,max_length=100)
+
+    def __str__(self):
+        return self.location_name
+
+
+
+class ItemModel(models.Model):
+    item_Name = models.CharField(max_length=100)
+    date = models.DateTimeField(auto_now_add=True)
+    Item_location=models.ForeignKey(Item_locationModel,on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.item_Name

@@ -1,7 +1,5 @@
-from django.http import HttpResponse, JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from apis.models import Snippet
-from apis.serializer import SnippetModel_Serializer,UserSerializer, RegistrationSerializer
+from apis.models import SnippetModel
+from apis.serializer import SnippetModel_Serializer, RegistrationSerializer
 from rest_framework.authtoken.models import Token
 from rest_framework import generics,permissions
 from rest_framework.response import Response
@@ -10,37 +8,18 @@ from django.contrib.auth import authenticate
 from .serializer import RegistrationSerializer
 from rest_framework import  status
 from rest_framework import permissions 
-from .serializer import ChangePasswordSerializer,OTPVerificationSerializer
-from web_app.models import UserProfile
+from apis.serializer import ChangePasswordSerializer,ItemSerialzer,LocationSerializer,OTPVerificationSerializer
+from facebook_clone.models import UserProfile
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import api_view,APIView
-from datetime import datetime
-from django.core.exceptions import ObjectDoesNotExist
-import pyotp
-from .models import OTP_Verification
+from apis.models import OTP_VerificationModel
 import string,random
 from django.core.mail import send_mail
-from django.conf import settings    
+from django.conf import settings 
+from apis.models import ItemModel,Item_locationModel
+from django.core.exceptions import ValidationError
 
-
-
-
-'''Serializers '''
-
-# @csrf_exempt
-# def snippet_list(request):
-#     if request.method=='GET':
-#         snippets = Snippet.objects.all()
-#         serializer = SnippetModel_Serializer(snippets,many=True)
-#         return JsonResponse(serializer.data,safe=False)
-    
-#     elif request.method == 'POST':
-#         data = JsonResponse.parse(request)
-#         serializer = SnippetModel_Serializer(data=data)
-#         if serializer.is_valid():
-#             serializer.view()
-#             return JsonResponse(serializer.data,status=201)
-#         return JsonResponse(serializer.erros, status=400)
 
 
 '''Request and Responses'''
@@ -48,7 +27,7 @@ from django.conf import settings
 @api_view(['GET','POST'])
 def snippet_list(request):
     if request.method=='POST':
-        snippets= Snippet.objects.all()
+        snippets= SnippetModel.objects.all()
         serializer = SnippetModel_Serializer(snippets, many=True)
         return Response(serializer.data)
     elif request.method == 'POST':
@@ -58,37 +37,14 @@ def snippet_list(request):
             return Response(serializer.data,status=status.HTTP_201_CREATED)
         return Response(serializer.error,status = status.HTTP_400_BAD_REQUEST)
     
-
-'''Serializers '''
-# @csrf_exempt
-# def snippet_details(request,pk):
-#     try:
-#         snippet = Snippet.ojbects.get(pk=pk)
-#     except Snippet.DoesNotExist:
-#         return HttpResponse(status=404)
-    
-#     if request.method=='GET':
-#         serializer = SnippetModel_Serializer(snippet)
-#         return JsonResponse(serializer.data)
-#     elif request.method=='GET':
-#         data = JsonResponse().parse(request)
-#         serializer = SnippetModel_Serializer(snippet,data=data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return JsonResponse(serializer.data)
-#         return JsonResponse(serializer.erros,status=400)
-    
-#     elif request.method == 'DELETE':
-#         snippet.delete()
-#         return HttpResponse(status=204)
     
 
 '''Request and Responses'''
 @api_view(['GET','PUT','PATCH'])
 def snippet_detail(request,pk):
     try:
-        snippet = Snippet.objects.get(pk=pk)
-    except Snippet.DoesNotExist:
+        snippet = SnippetModel.objects.get(pk=pk)
+    except SnippetModel.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     if request.method == 'GET':
         serializer = SnippetModel_Serializer(snippet)
@@ -106,16 +62,15 @@ def snippet_detail(request,pk):
 
 
 '''Token Based Authentication'''
-class UserRegistrationView(generics.CreateAPIView):
+class UserRegistrationAPIView(generics.CreateAPIView):
     serializer_class = RegistrationSerializer
     permission_classes = [permissions.AllowAny]
 
 
-class UserLoginView(APIView):
+class UserLoginAPIView(APIView):
     def post(self,request):
 
         user = authenticate(username=request.data['email'],password=request.data['password'])
-        # user = UserProfile.objects.filter(email=request.data('email'))
         if user:
             token,created = Token.objects.get_or_create(user=user)
             return Response({'token':token.key,'created':created})
@@ -130,7 +85,7 @@ def generate_otp():
 
 
 '''Registration Using Serializer'''
-class RegisterView(APIView):
+class RegisterAPIView(APIView):
     def post(self, request):
         if request.method == 'POST':
             serializer= RegistrationSerializer(data=request.data)
@@ -140,7 +95,7 @@ class RegisterView(APIView):
                 otp = generate_otp()
 
                 # otp = OTP_Verification
-                OTP_Verification.objects.create(user=user,otp=otp)
+                OTP_VerificationModel.objects.create(user=user,otp=otp)
                 return Response({"Your otp":otp,"message": "OTP sent successfully"}, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
@@ -152,7 +107,7 @@ class RegisterView(APIView):
         send_mail(subject,message,from_email,receipt)
         return otp
 
-class ChangePasswordView(APIView):
+class ChangePasswordAPIView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def post(self, request, *args, **kwargs):
@@ -163,14 +118,14 @@ class ChangePasswordView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
    
 
-class VerifyOTPView(APIView):
-    def post(self, request):
+class VerifyOTPAPIView(APIView):
+    def post(self, request, **kwargs):
         serializer = OTPVerificationSerializer(data=request.data)
         if serializer.is_valid():
             email = serializer.validated_data.get('email')
             otp_code = request.data.get('otp')
         try:
-            otp_verification = OTP_Verification.objects.get(email=email)
+            otp_verification = OTP_VerificationModel.objects.get(email=email)
             if otp_verification.otp == otp_code:
                 # OTP is valid, create token and send it to user
                 token = self.create_token(email)
@@ -178,7 +133,7 @@ class VerifyOTPView(APIView):
                 return Response({"token": token,"otp":otp_code, "created": True}, status=status.HTTP_200_OK)
             else:
                 return Response({"message": "Invalid OTP"}, status=status.HTTP_400_BAD_REQUEST)
-        except OTP_Verification.DoesNotExist:
+        except OTP_VerificationModel.DoesNotExist:
             return Response({"message": "OTP not found"}, status=status.HTTP_400_BAD_REQUEST)
 
     def create_token(self, email):
@@ -188,60 +143,33 @@ class VerifyOTPView(APIView):
 
   
 
-# class generateKey:
-#     @staticmethod
-#     def returnValue(phone):
-#         return str(phone) + str(datetime.date(datetime.now())) + "Some Random Secret Key "
 
-
-# #post request to generate a otp code
-# class getPhoneNumbeRegister(APIView):
-#     @staticmethod
-#     def get(request,phone):
-#         try:
-#             mobile = OTP_Verification.objects.get(mobile=phone)
-#         except ObjectDoesNotExist:
-#             OTP_Verification.objects.create(
-#                 mobile=phone
-#             )
-#             mobile = OTP_Verification.objects.get(mobile=phone)
-#         mobile.counter += 1
-#         mobile.save()
-#         keygen = generateKey()
-#         key = base64.b32encode(keygen.returnValue(phone).encode())
-#         otp = pyotp.HOTP(key)
-#         print(otp.at(mobile.counter))
-#         return Response({"OTP":otp.at(mobile.counter)},status=200)
-
-#     @staticmethod
-#     def post(request,phone):
-#         try:
-#             mobile = OTP_Verification.objects.get(mobile=phone)
-#         except ObjectDoesNotExist:
-#             return Response("User does not exist",status=404)
-#         keygen=generateKey()
-#         key = base64.b32encode(keygen.returnValue(phone).encode())
-#         otp = pyotp.HOTP(key)
-#         if otp.verify(request.data["otp"],mobile.counter):
-#             mobile.isVerified = True
-#             mobile.save()
-#             return Response("You are authorized",status=200)
-#         return Response("OTP is wrong",status=400)
+class ItemListAPIView(generics.ListCreateAPIView):
+    serializer_class = ItemSerialzer
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
+    
+    def get_queryset(self):
+        queryset = ItemModel.objects.all()
+        location = self.request.query_params.get('location')
+        if location is not None:
+            queryset = queryset.filter(Item_location=location)
+        return queryset
     
 
-# EXPIRED_TIME = 50 #SECONDS
 
-# class getPhoneNumberRegistered_TimeBase(APIView):
-#     @staticmethod
-#     def get(request,phone):
-#         try:
-#             mobile = OTP_Verification.objects.get(mobile=phone)
-#         except ObjectDoesNotExist:
-#             return Response("User does not exist",status=400)
-#         keygen = generateKey()
-#         otp = base64.b16encode(keygen.returnValue(phone).encode)
-#         if otp.verify(request.data["otp"]):
-#             mobile.isVerified = True
-#             mobile.svae()
-#             return Response("You are authorized",status=200)
-#         return Response("OTP is wrong/expired")
+class LocationListAPIView(generics.ListCreateAPIView):
+    serializer_class = LocationSerializer
+    queryset = Item_locationModel.objects.all()
+
+    
+
+class ItemDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = ItemSerialzer
+    queryset = ItemModel.objects.all()
+
+
+class LocationDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = LocationSerializer
+    queryset = Item_locationModel.objects.all()
+     

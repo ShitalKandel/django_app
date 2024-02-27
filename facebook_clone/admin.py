@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import UserProfile, ImageUpload, Post, Comment, FriendRequest
+from facebook_clone.models import UserProfile, ImageUpload, Post, Comment, FriendRequest
 
 
 @admin.register(UserProfile)
