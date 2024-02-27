@@ -1,9 +1,9 @@
 db.sqlite3
-__pycache__
-/social_media
+.__pycache__
+.social_media
 static_root
-/migrations
+.migrations
 .env
-/media
-/static
-/static_root
+media
+static
+static_root
