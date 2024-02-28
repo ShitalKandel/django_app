@@ -7,11 +7,12 @@ from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from rest_framework import status
 from rest_framework.permissions import AllowAny
-
+from rest_framework.authentication import SessionAuthentication
 
 
 class AuthorView(APIView):
     permission_classes = [AllowAny]
+    authentication_classes = [SessionAuthentication]
     def get(self, request):
         authors = Author.objects.all()
         serializer = AuthorSerializer(authors, many=True)
@@ -25,31 +26,19 @@ class AuthorView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
+
 class ArticleViewSets(viewsets.ModelViewSet):
     queryset = Article.objects.all()
     serializer_class = ArticleSerializer
 
-    def create(self, request):
-        return self.create_article(request)
-
-    def create_article(self, request):
+    def create(self,request,*args,**kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-
-        # author_data = request.data.get('name','email')
-        author_serializer = AuthorSerializer(data=request.data.get('author_key'))
-        if author_serializer.is_valid():
-            author_instance, created = Author.objects.get_or_create(**author_serializer.validated_data) 
-            # serializer.validated_data['author'] = author_instance
-            serializer.validated_data.pop('author_key')
-            serializer.save()
-            author_serializer = AuthorSerializer(data=author_instance)
-            serializer.validated_data['author_key']=author_serializer
-
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(request,serializer.data,headers=headers)
             
-            return Response(serializer.validated_data, status=status.HTTP_201_CREATED)
-        else:
-            return Response({"error": "Invalid author data"}, status=status.HTTP_400_BAD_REQUEST)
+
         
     def retrieve(self, request, pk=None):
         article_instance = get_object_or_404(self.queryset, pk=pk)
@@ -70,5 +59,3 @@ class ArticleViewSets(viewsets.ModelViewSet):
             return Response(serializer.data)
         else:
             return Response({"error": "Invalid author data"}, status=status.HTTP_400_BAD_REQUEST)
-
-
