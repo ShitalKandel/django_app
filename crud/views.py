@@ -31,31 +31,28 @@ class ArticleViewSets(viewsets.ModelViewSet):
     queryset = Article.objects.all()
     serializer_class = ArticleSerializer
 
-    def create(self,request,*args,**kwargs):
+    def perform_create(self,request,*args,**kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response(request,serializer.data,headers=headers)
-            
+        super().perform_create(serializer)
+        # headers = self.get_success_headers(serializer.data)
+        return Response(serializer.validated_data)
 
         
     def retrieve(self, request, pk=None):
-        article_instance = get_object_or_404(self.queryset, pk=pk)
-        serializer = ArticleSerializer(article_instance)
+        queryset = Article.objects.all()
+        article = get_object_or_404(queryset, pk=pk)
+        serializer = ArticleSerializer(article)
+        return Response(serializer.validated_data)    
+
+    def update(self, request, pk=None):
+        article = get_object_or_404(Article, pk=pk)
+        serializer = ArticleSerializer(article, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
         return Response(serializer.data)
 
-    def update(self, request,**kwargs):
-        partial = kwargs.pop('partial', False)
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
-        serializer.is_valid(raise_exception=True)
-
-        author_data = request.data.get('author')
-        author_serializer = AuthorSerializer(data=author_data)
-        if author_serializer.is_valid():
-            author_instance, created = Author.objects.get_or_create(**author_serializer.validated_data)
-            serializer.save(author=author_instance)
-            return Response(serializer.data)
-        else:
-            return Response({"error": "Invalid author data"}, status=status.HTTP_400_BAD_REQUEST)
+    def destroy(self, request, pk=None):
+        article = get_object_or_404(Article, pk=pk)
+        article.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

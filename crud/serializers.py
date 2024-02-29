@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from crud.models import Author,Article
 
-
+from django.db.models.query import QuerySet
 
 class AuthorSerializer(serializers.ModelSerializer):
     class Meta:
@@ -27,7 +27,7 @@ class ArticleSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         author_data = validated_data.pop('author_key')
-        author,created = Author.objects.create(**author_data)
+        author = Author.objects.get(id = author_data.id)
         article = Article.objects.create(author=author,**validated_data)
         return article
     
