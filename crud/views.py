@@ -68,4 +68,7 @@ def StudentDetailView(request):
             return Response(serializer.data)
         else:
             return Response({"error": "Invalid author data"}, status=status.HTTP_400_BAD_REQUEST)
+<<<<<<< HEAD
+>>>>>>> parent of 1e5195cf (modelviewset (replaced, self with super to work perform_create))
+=======
 >>>>>>> parent of 1e5195cf (modelviewset (replaced, self with super to work perform_create))

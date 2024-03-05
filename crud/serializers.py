@@ -2,6 +2,10 @@ from rest_framework import serializers
 from crud.models import Author,Article,Student
 
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> parent of 1e5195cf (modelviewset (replaced, self with super to work perform_create))
 
 class AuthorSerializer(serializers.ModelSerializer):
     class Meta:
