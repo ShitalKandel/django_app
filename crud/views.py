@@ -33,15 +33,39 @@ class ArticleViewSets(viewsets.ModelViewSet):
     queryset = Article.objects.all()
     serializer_class = ArticleSerializer
 
-    def perform_create(self,request,*args,**kwargs):
+    def create(self,request,*args,**kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        super().perform_create(serializer)
-        # headers = self.get_success_headers(serializer.data)
-        return Response(serializer.validated_data)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(request,serializer.data,headers=headers)
+            
 
+<<<<<<< HEAD
 def StudentDetailView(request):
     stud = Student.objects.get(id=1)
     serializer = StudentSerializer(stud)
     json_data = JSONRenderer.render(serializer.data)
     return HttpResponse(json_data)
+=======
+        
+    def retrieve(self, request, pk=None):
+        article_instance = get_object_or_404(self.queryset, pk=pk)
+        serializer = ArticleSerializer(article_instance)
+        return Response(serializer.data)
+
+    def update(self, request,**kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+
+        author_data = request.data.get('author')
+        author_serializer = AuthorSerializer(data=author_data)
+        if author_serializer.is_valid():
+            author_instance, created = Author.objects.get_or_create(**author_serializer.validated_data)
+            serializer.save(author=author_instance)
+            return Response(serializer.data)
+        else:
+            return Response({"error": "Invalid author data"}, status=status.HTTP_400_BAD_REQUEST)
+>>>>>>> parent of 1e5195cf (modelviewset (replaced, self with super to work perform_create))
