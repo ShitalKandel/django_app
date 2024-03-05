@@ -1,13 +1,15 @@
 
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from crud.models import Article,Author
-from crud.serializers import ArticleSerializer,AuthorSerializer
+from crud.models import Article,Author,Student
+from crud.serializers import ArticleSerializer,AuthorSerializer,StudentSerializer
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.authentication import SessionAuthentication
+from rest_framework.renderers import JSONRenderer
+from django.http import HttpResponse
 
 
 class AuthorView(APIView):
@@ -38,21 +40,8 @@ class ArticleViewSets(viewsets.ModelViewSet):
         # headers = self.get_success_headers(serializer.data)
         return Response(serializer.validated_data)
 
-        
-    def retrieve(self, request, pk=None):
-        queryset = Article.objects.all()
-        article = get_object_or_404(queryset, pk=pk)
-        serializer = ArticleSerializer(article)
-        return Response(serializer.validated_data)    
-
-    def update(self, request, pk=None):
-        article = get_object_or_404(Article, pk=pk)
-        serializer = ArticleSerializer(article, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
-
-    def destroy(self, request, pk=None):
-        article = get_object_or_404(Article, pk=pk)
-        article.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+def StudentDetailView(request):
+    stud = Student.objects.get(id=1)
+    serializer = StudentSerializer(stud)
+    json_data = JSONRenderer.render(serializer.data)
+    return HttpResponse(json_data)

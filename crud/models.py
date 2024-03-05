@@ -16,5 +16,9 @@ class Article(models.Model):
         return self.title
     
 
-class Gallery(models.Model):
-    pass
+class Student(models.Model):
+    name = models.CharField(max_length=100)
+    roll = models.IntegerField()
+    city = models.CharField(max_length=100)
+
+    

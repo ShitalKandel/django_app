@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from crud.models import Author,Article
+from crud.models import Author,Article,Student
 
 from django.db.models.query import QuerySet
 
@@ -18,12 +18,6 @@ class ArticleSerializer(serializers.ModelSerializer):
         fields = ['title','description','body','author']
 
 
-    # author = serializers.IntegerField()
-    # title = serializers.CharField()
-    # description = serializers.CharField()
-    # body = serializers.CharField()
-    # author_key = AuthorSerializer()
-
 
     def create(self, validated_data):
         author_data = validated_data.pop('author_key')
@@ -31,3 +25,7 @@ class ArticleSerializer(serializers.ModelSerializer):
         article = Article.objects.create(author=author,**validated_data)
         return article
     
+class StudentSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=100)
+    roll = serializers.IntegerField()
+    city = serializers.CharField(max_length=100)
