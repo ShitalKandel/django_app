@@ -1,5 +1,15 @@
 db.sqlite3
 .__pycache__
+<<<<<<< HEAD
 .settings
 .asgi.py 
 .vscode
+=======
+social_media
+static_root
+.migrations
+.env
+media
+static
+static_root
+>>>>>>> origin/main

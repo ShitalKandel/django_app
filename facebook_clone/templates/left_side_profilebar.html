@@ -1,0 +1,80 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Facebook-like Sidebar</title>
+<style>
+.sidebar {
+  position: fixed;  
+  top:  10%;
+  left:  0;
+  height:  100%;
+  width:  23.33%; 
+  background-color: #e9eef8;
+  color: #3b5998;
+  padding:  20px;
+  box-sizing: border-box;
+  overflow: auto;
+}
+
+.profile-picture {
+  width:   100px;
+  height:   100px;
+  border-radius:   50%;
+  object-fit: cover; 
+  background-size: cover; 
+  background-position: center; 
+  background-repeat: no-repeat;
+  margin-bottom:   20px;
+}
+
+
+.vertical-menu a {
+  display: block;
+  margin-bottom:  10px;
+}
+
+.vertical-menu a:last-child {
+  margin-right:  0;
+}
+
+.logout-button {
+  background-color: #065e74;
+  color: rgb(230,  133,  133)y;
+  border: none;
+  padding:  10px  20px;
+  cursor: pointer;
+  border-radius:  5px;
+}
+
+.logout-button:hover {
+  background-color: darkred;
+}
+
+</style>
+</head>
+<body>
+  <div class="sidebar">
+    <!-- <img src="#" alt="Profile Picture" class="profile-picture"><br> -->
+    <!-- <h3>Name</h3> -->
+    <!-- <strong>{{ request.user.first_name }} {{request.user.last_name}}</strong> -->
+    <br><br>
+    <div class="vertical-menu">
+      <a data-url = "web_app:accept_friend_request">Friends
+      <ol id = "friend-list">
+        {{ friend_request.to_user}}
+      </ol>
+    </a>
+      <a>Posts</a>
+      <a>Settings</a>
+    </div>
+    <form action="{% url 'web_app:login' %}" method="GET">
+      {% csrf_token %}
+    <button class="logout-button" >Logout</button>
+    </form>
+  </div>
+</body><!DOCTYPE html>
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <Script>
+$(document).ready(function() {
+    $('#notifications-link').click(function(event) {
+        event.preventDefault(); 
+        var url = $(this).data('url');
+        console.log('url')
+        $.ajax({
+            url: url, 
+            type: "GET",
+            success: function(response) {
+                var notifications = response;
+                var notificationsHtml = '';
+                notifications.forEach(function(notification) {
+                    notificationsHtml += '<div>';
+                    notificationsHtml += '<p>' + notification.from_user + ' sent you a friend request</p>';
+                    notificationsHtml += '<button onclick="acceptRequest(' + notification.id + ')">Accept</button>';
+                    notificationsHtml += '<button onclick="declineRequest(' + notification.id + ')">Decline</button>';
+                    notificationsHtml += '</div>';
+                });
+                $('#notifications-modal').html(notificationsHtml).modal('show');
+            },
+            error: function(xhr, status, error) {
+                console.error(xhr.responseText);
+            }
+        });
+    });
+
+    // AJAX for adding friend
+    $('.add-friend-form').submit(function(event) {
+        event.preventDefault();
+        var form = $(this);
+        var url = form.attr('action');
+        $.ajax({
+            url: url,
+            type: form.attr('method'),
+            data: form.serialize(),
+            success: function(response) {
+                // Handle success (maybe update UI to show friend added)
+                console.log('Friend request sent successfully');
+            },
+            error: function(xhr, status, error) {
+                console.error(xhr.responseText);
+            }
+        });
+    });
+});
+
+  </script>
+  <style>
+.sidebar-left {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 80px; 
+  background-color: #1877f2;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+.profile-picture {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 20px;
+}
+
+.profile-info span {
+  font-weight: bold;
+  color: #ffffff; 
+  margin-right: 6cm; 
+}
+
+.navigation-links {
+  margin-right: auto;
+  display: flex;
+  width: 30%;
+}
+
+.navigation-links a {
+  color: #ffffff; 
+  text-decoration: none;
+  margin-left: 20px;
+}
+
+.navigation-links a:hover {
+  text-decoration: underline;
+}
+
+.setting-icon {
+  display: flex;
+  flex-direction: column;
+}
+
+.setting-icon {
+      padding: 10px;
+    }
+    
+.menu {
+  width: 35px;
+  height: 5px;
+  background-color: #fff; 
+  margin: 6px 0;
+}
+    
+.setting-icon:hover .menu {
+  background-color: #bbb;
+}
+
+.setting-icon{
+margin-right: 0%;
+}
+
+.search {
+  margin-right: 0;
+  width: 25%; 
+}
+
+/* #notifications-link{
+  position: relative;
+
+}
+
+#notifications-link::after{
+  content: '';
+  top: 1rem;
+  left : 0;
+  position: absolute;
+  height: 5rem;
+  background: red;
+  width: 5rem;
+
+} */
+
+
+  </style>
+</head>
+<body>
+    <div class="sidebar-left">
+        <div class="profile-info">
+            <img src="#" alt="Profile Picture" class="profile-picture">
+            <span>{{ request.user.first_name }} {{ request.user.last_name }}</span>
+        </div>
+        <input class="search" type="search" placeholder="Search">
+        {% csrf_token %}
+        <div class="navigation-links">
+            <a href="#">Home</a>
+            <a href="#">Friends</a>
+            <a href="#">Messages</a>
+            <a href="#" id="notifications-link" data-url="{% url 'web_app:notification' %}">Notifications</a>
+        </div>
+        <div class="setting-icon">
+          <div class="menu"></div>
+          <div class="menu"></div>
+          <div class="menu"></div>
+        </div>
+    </div>
+</body>
+</html>
+
+

@@ -1,0 +1,27 @@
+{% load static %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <form method="POST" class="register-form">
+            {% csrf_token %}
+            <img src="{% static 'psycho.png' %}" alt="Psycho Media Icon" class="icon-media">
+            <div class="title">
+                <h2>User Registration</h2>
+            </div>
+            {{ form.as_p }}
+            <button class="signup-btn" type="submit">Register</button>
+            <br><br>
+            <button class="login-btn" type="submit">Sign In</button>
+        </form>
+    </div>
+</body>
+</html>
